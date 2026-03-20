@@ -1,0 +1,8 @@
+# API relay
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# Inference (eval.py)
+torch>=2.2.0
+torchaudio>=2.2.0
