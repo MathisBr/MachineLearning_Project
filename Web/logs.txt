@@ -1,0 +1,1338 @@
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:48:44.482] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "enregistrement_2026-03-20T09-40-01.wav",
+  "size_bytes": 113004,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:49:00.048] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\_subclasses\\functional_tensor.py:283: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at C:\\actions-runner\\_work\\pytorch\\pytorch\\pytorch\\torch\\csrc\\utils\\tensor_numpy.cpp:84.)\n  cpu = _conversion_method_template(device=torch.device(\"cpu\"))\nTraceback (most recent call last):\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 309, in <module>\n    main()\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 274, in main\n    model = load_model(model_name)\n            ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 124, in load_model\n    model.load_state_dict(state)\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 2635, in load_state_dict\n    raise RuntimeError(\nRuntimeError: Error(s) in loading state_dict for InstrumentCNN:\n\tMissing key(s) in state_dict: \"features.0.block.0.weight\", \"features.0.block.1.weight\", \"features.0.block.1.bias\", \"features.0.block.1.running_mean\", \"features.0.block.1.running_var\", \"features.1.block.0.weight\", \"features.1.block.1.weight\", \"features.1.block.1.bias\", \"features.1.block.1.running_mean\", \"features.1.block.1.running_var\", \"features.2.block.0.weight\", \"features.2.block.1.weight\", \"features.2.block.1.bias\", \"features.2.block.1.running_mean\", \"features.2.block.1.running_var\", \"head.1.weight\", \"head.1.bias\", \"head.4.weight\", \"head.4.bias\". \n\tUnexpected key(s) in state_dict: \"conv_layers.0.block.0.weight\", \"conv_layers.0.block.1.weight\", \"conv_layers.0.block.1.bias\", \"conv_layers.0.block.1.running_mean\", \"conv_layers.0.block.1.running_var\", \"conv_layers.0.block.1.num_batches_tracked\", \"conv_layers.1.block.0.weight\", \"conv_layers.1.block.1.weight\", \"conv_layers.1.block.1.bias\", \"conv_layers.1.block.1.running_mean\", \"conv_layers.1.block.1.running_var\", \"conv_layers.1.block.1.num_batches_tracked\", \"conv_layers.2.block.0.weight\", \"conv_layers.2.block.1.weight\", \"conv_layers.2.block.1.bias\", \"conv_layers.2.block.1.running_mean\", \"conv_layers.2.block.1.running_var\", \"conv_layers.2.block.1.num_batches_tracked\", \"classifier.2.weight\", \"classifier.2.bias\", \"classifier.5.weight\", \"classifier.5.bias\"."
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:49:08.476] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "enregistrement_2026-03-20T09-40-01.wav",
+  "size_bytes": 113004,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:49:11.042] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\_subclasses\\functional_tensor.py:283: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at C:\\actions-runner\\_work\\pytorch\\pytorch\\pytorch\\torch\\csrc\\utils\\tensor_numpy.cpp:84.)\n  cpu = _conversion_method_template(device=torch.device(\"cpu\"))\nTraceback (most recent call last):\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 309, in <module>\n    main()\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 274, in main\n    model = load_model(model_name)\n            ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 124, in load_model\n    model.load_state_dict(state)\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 2635, in load_state_dict\n    raise RuntimeError(\nRuntimeError: Error(s) in loading state_dict for InstrumentCNN:\n\tMissing key(s) in state_dict: \"features.0.block.0.weight\", \"features.0.block.1.weight\", \"features.0.block.1.bias\", \"features.0.block.1.running_mean\", \"features.0.block.1.running_var\", \"features.1.block.0.weight\", \"features.1.block.1.weight\", \"features.1.block.1.bias\", \"features.1.block.1.running_mean\", \"features.1.block.1.running_var\", \"features.2.block.0.weight\", \"features.2.block.1.weight\", \"features.2.block.1.bias\", \"features.2.block.1.running_mean\", \"features.2.block.1.running_var\", \"head.1.weight\", \"head.1.bias\", \"head.4.weight\", \"head.4.bias\". \n\tUnexpected key(s) in state_dict: \"conv_layers.0.block.0.weight\", \"conv_layers.0.block.1.weight\", \"conv_layers.0.block.1.bias\", \"conv_layers.0.block.1.running_mean\", \"conv_layers.0.block.1.running_var\", \"conv_layers.0.block.1.num_batches_tracked\", \"conv_layers.1.block.0.weight\", \"conv_layers.1.block.1.weight\", \"conv_layers.1.block.1.bias\", \"conv_layers.1.block.1.running_mean\", \"conv_layers.1.block.1.running_var\", \"conv_layers.1.block.1.num_batches_tracked\", \"conv_layers.2.block.0.weight\", \"conv_layers.2.block.1.weight\", \"conv_layers.2.block.1.bias\", \"conv_layers.2.block.1.running_mean\", \"conv_layers.2.block.1.running_var\", \"conv_layers.2.block.1.num_batches_tracked\", \"classifier.2.weight\", \"classifier.2.bias\", \"classifier.5.weight\", \"classifier.5.bias\"."
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:54:26.602] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:54:29.172] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\_subclasses\\functional_tensor.py:283: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at C:\\actions-runner\\_work\\pytorch\\pytorch\\pytorch\\torch\\csrc\\utils\\tensor_numpy.cpp:84.)\n  cpu = _conversion_method_template(device=torch.device(\"cpu\"))"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:54:32.741] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Silver",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:54:35.271] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\_subclasses\\functional_tensor.py:283: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at C:\\actions-runner\\_work\\pytorch\\pytorch\\pytorch\\torch\\csrc\\utils\\tensor_numpy.cpp:84.)\n  cpu = _conversion_method_template(device=torch.device(\"cpu\"))"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:54:37.786] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:54:40.307] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\_subclasses\\functional_tensor.py:283: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at C:\\actions-runner\\_work\\pytorch\\pytorch\\pytorch\\torch\\csrc\\utils\\tensor_numpy.cpp:84.)\n  cpu = _conversion_method_template(device=torch.device(\"cpu\"))\nTraceback (most recent call last):\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 316, in <module>\n    main()\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 281, in main\n    model = load_model(model_name)\n            ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 131, in load_model\n    model.load_state_dict(state)\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 2635, in load_state_dict\n    raise RuntimeError(\nRuntimeError: Error(s) in loading state_dict for InstrumentCNN:\n\tMissing key(s) in state_dict: \"classifier.1.weight\", \"classifier.1.bias\", \"classifier.4.weight\", \"classifier.4.bias\". \n\tUnexpected key(s) in state_dict: \"classifier.5.weight\", \"classifier.5.bias\", \"classifier.2.weight\", \"classifier.2.bias\"."
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:56:00.150] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:56:06.247] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": ""
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:56:09.703] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:56:12.271] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 316, in <module>\n    main()\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 281, in main\n    model = load_model(model_name)\n            ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\Web\\eval.py\", line 131, in load_model\n    model.load_state_dict(state)\n  File \"C:\\Users\\alyog\\Desktop\\S8\\MachineLearning\\projet\\MachineLearning_Project\\.venv\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 2635, in load_state_dict\n    raise RuntimeError(\nRuntimeError: Error(s) in loading state_dict for InstrumentCNN:\n\tMissing key(s) in state_dict: \"classifier.1.weight\", \"classifier.1.bias\", \"classifier.4.weight\", \"classifier.4.bias\". \n\tUnexpected key(s) in state_dict: \"classifier.5.weight\", \"classifier.5.bias\", \"classifier.2.weight\", \"classifier.2.bias\"."
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:57:55.376] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:57:58.141] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": ""
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:58:14.456] POST /predict — requête reçue
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 10:58:17.329] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": ""
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:06:13.011] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:06:15.782] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Modele introuvable : C:\\\\Users\\\\alyog\\\\Desktop\\\\S8\\\\MachineLearning\\\\projet\\\\MachineLearning_Project\\\\Web\\\\..\\\\Models\\\\LilDrill(.pth|.pt)\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:06:18.294] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:06:21.027] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Impossible de lire l'audio depuis stdin : TorchCodec is required for load_with_torchcodec. Please install torchcodec to use this function.\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:08:33.716] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:08:36.516] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Impossible de lire l'audio depuis stdin : No module named 'soundfile'\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:10:44.391] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:10:47.130] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Modele introuvable : C:\\\\Users\\\\alyog\\\\Desktop\\\\S8\\\\MachineLearning\\\\projet\\\\MachineLearning_Project\\\\Web\\\\..\\\\Models\\\\LilDrill(.pth|.pt)\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:10:56.312] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:10:59.255] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        5
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.8571,
+      "presence_count": 6,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8804,
+        "org": 0.104,
+        "pia": 0.0499,
+        "voi": 0.9538
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8613,
+        "org": 0.1782,
+        "pia": 0.0477,
+        "voi": 0.9456
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.9092,
+        "org": 0.1424,
+        "pia": 0.0532,
+        "voi": 0.9295
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8688,
+        "org": 0.1548,
+        "pia": 0.0267,
+        "voi": 0.9637
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8093,
+        "org": 0.5091,
+        "pia": 0.08,
+        "voi": 0.8113
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9198,
+        "org": 0.1194,
+        "pia": 0.0787,
+        "voi": 0.9009
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.7575,
+        "org": 0.0322,
+        "pia": 0.1922,
+        "voi": 0.9566
+      }
+    }
+  ],
+  "processed_in_ms": 252.1
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:13:36.277] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Booker T. Jones - Pound It Out-9.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:13:39.197] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        5
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.8571,
+      "presence_count": 6,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8804,
+        "org": 0.104,
+        "pia": 0.0499,
+        "voi": 0.9538
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8613,
+        "org": 0.1782,
+        "pia": 0.0477,
+        "voi": 0.9456
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.9092,
+        "org": 0.1424,
+        "pia": 0.0532,
+        "voi": 0.9295
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8688,
+        "org": 0.1548,
+        "pia": 0.0267,
+        "voi": 0.9637
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8093,
+        "org": 0.5091,
+        "pia": 0.08,
+        "voi": 0.8113
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9198,
+        "org": 0.1194,
+        "pia": 0.0787,
+        "voi": 0.9009
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.7575,
+        "org": 0.0322,
+        "pia": 0.1922,
+        "voi": 0.9566
+      }
+    }
+  ],
+  "processed_in_ms": 129.7
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:14:05.652] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "enregistrement_2026-03-20T10-14-03.wav",
+  "size_bytes": 574784,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:14:08.487] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Impossible de lire l'audio depuis stdin : Error opening <_io.BytesIO object at 0x0000019BFCDC7790>: Format not recognised.\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:16:06.617] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:16:09.499] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.8571,
+      "presence_count": 6,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        6
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.8772,
+        "org": 0.5517,
+        "pia": 0.3228,
+        "voi": 0.1419
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9562,
+        "org": 0.2306,
+        "pia": 0.3939,
+        "voi": 0.0636
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9439,
+        "org": 0.3221,
+        "pia": 0.3305,
+        "voi": 0.0962
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9728,
+        "org": 0.1637,
+        "pia": 0.5366,
+        "voi": 0.0187
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9684,
+        "org": 0.2113,
+        "pia": 0.318,
+        "voi": 0.067
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9043,
+        "org": 0.6144,
+        "pia": 0.47,
+        "voi": 0.0224
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8383,
+        "org": 0.0449,
+        "pia": 0.2873,
+        "voi": 0.8802
+      }
+    }
+  ],
+  "processed_in_ms": 124.2
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:22:40.593] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:22:43.477] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Modele introuvable : C:\\\\Users\\\\alyog\\\\Desktop\\\\S8\\\\MachineLearning\\\\projet\\\\MachineLearning_Project\\\\Web\\\\..\\\\Models\\\\LilDrill(.pth|.pt)\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:22:44.760] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:22:47.550] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.8571,
+      "presence_count": 6,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        6
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.8772,
+        "org": 0.5517,
+        "pia": 0.3228,
+        "voi": 0.1419
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9562,
+        "org": 0.2306,
+        "pia": 0.3939,
+        "voi": 0.0636
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9439,
+        "org": 0.3221,
+        "pia": 0.3305,
+        "voi": 0.0962
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9728,
+        "org": 0.1637,
+        "pia": 0.5366,
+        "voi": 0.0187
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9684,
+        "org": 0.2113,
+        "pia": 0.318,
+        "voi": 0.067
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9043,
+        "org": 0.6144,
+        "pia": 0.47,
+        "voi": 0.0224
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8383,
+        "org": 0.0449,
+        "pia": 0.2873,
+        "voi": 0.8802
+      }
+    }
+  ],
+  "processed_in_ms": 117.6
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:28:20.100] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:28:22.866] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Modele introuvable : C:\\\\Users\\\\alyog\\\\Desktop\\\\S8\\\\MachineLearning\\\\projet\\\\MachineLearning_Project\\\\Web\\\\..\\\\Models\\\\LilDrill(.pth|.pt)\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:28:23.518] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:28:26.298] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.8571,
+      "presence_count": 6,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        6
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.8772,
+        "org": 0.5517,
+        "pia": 0.3228,
+        "voi": 0.1419
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9562,
+        "org": 0.2306,
+        "pia": 0.3939,
+        "voi": 0.0636
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9439,
+        "org": 0.3221,
+        "pia": 0.3305,
+        "voi": 0.0962
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9728,
+        "org": 0.1637,
+        "pia": 0.5366,
+        "voi": 0.0187
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9684,
+        "org": 0.2113,
+        "pia": 0.318,
+        "voi": 0.067
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9043,
+        "org": 0.6144,
+        "pia": 0.47,
+        "voi": 0.0224
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8383,
+        "org": 0.0449,
+        "pia": 0.2873,
+        "voi": 0.8802
+      }
+    }
+  ],
+  "processed_in_ms": 122.0
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:30:16.311] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "LilDrill",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:30:19.034] ERREUR eval.py
+────────────────────────────────────────────────────────────
+{
+  "returncode": 1,
+  "stderr": "",
+  "stdout": "{\"error\": \"Modele introuvable : C:\\\\Users\\\\alyog\\\\Desktop\\\\S8\\\\MachineLearning\\\\projet\\\\MachineLearning_Project\\\\Web\\\\..\\\\Models\\\\LilDrill(.pth|.pt)\"}"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:30:21.906] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "01 Blue Train-26.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:30:24.672] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.8571,
+      "presence_count": 6,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        6
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.8772,
+        "org": 0.5517,
+        "pia": 0.3228,
+        "voi": 0.1419
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9562,
+        "org": 0.2306,
+        "pia": 0.3939,
+        "voi": 0.0636
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9439,
+        "org": 0.3221,
+        "pia": 0.3305,
+        "voi": 0.0962
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9728,
+        "org": 0.1637,
+        "pia": 0.5366,
+        "voi": 0.0187
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9684,
+        "org": 0.2113,
+        "pia": 0.318,
+        "voi": 0.067
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9043,
+        "org": 0.6144,
+        "pia": 0.47,
+        "voi": 0.0224
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.8383,
+        "org": 0.0449,
+        "pia": 0.2873,
+        "voi": 0.8802
+      }
+    }
+  ],
+  "processed_in_ms": 117.8
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:30:56.894] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "05 - Sonata in A minor, Op. post. 143 D.784 - I. Allegro giusto-35.wav",
+  "size_bytes": 3528044,
+  "model": "Brrrevet",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-20 11:30:59.773] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "Brrrevet",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 1.0,
+      "presence_count": 7,
+      "dominant": true,
+      "window_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "org": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "pia": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "voi": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9741,
+        "org": 0.0174,
+        "pia": 0.6787,
+        "voi": 0.1062
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.991,
+        "org": 0.0023,
+        "pia": 0.7632,
+        "voi": 0.1087
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9883,
+        "org": 0.0023,
+        "pia": 0.8418,
+        "voi": 0.0662
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9846,
+        "org": 0.0073,
+        "pia": 0.658,
+        "voi": 0.1872
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9963,
+        "org": 0.0006,
+        "pia": 0.7929,
+        "voi": 0.0733
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9851,
+        "org": 0.0049,
+        "pia": 0.5594,
+        "voi": 0.3817
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "gac",
+      "scores": {
+        "gac": 0.9501,
+        "org": 0.0182,
+        "pia": 0.551,
+        "voi": 0.6113
+      }
+    }
+  ],
+  "processed_in_ms": 115.7
+}

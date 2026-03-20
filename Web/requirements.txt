@@ -6,3 +6,5 @@ python-multipart>=0.0.9
 # Inference (eval.py)
 torch>=2.2.0
 torchaudio>=2.2.0
+numpy>=1.26.0
+soundfile>=0.12.1

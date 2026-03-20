@@ -49,6 +49,8 @@ Notes :
   + Linear(2048→256→4). À adapter si ton train.py diffère.
 """
 
+import io
+import subprocess
 import json
 import sys
 import time
@@ -95,30 +97,38 @@ class ConvBlock(nn.Module):
 class InstrumentCNN(nn.Module):
     def __init__(self, n_classes: int = 4):
         super().__init__()
-        self.features = nn.Sequential(
+        # Noms alignes sur train.py
+        self.conv_layers = nn.Sequential(
             ConvBlock(1, 32),
             ConvBlock(32, 64),
             ConvBlock(64, 128),
         )
         self.pool = nn.AdaptiveAvgPool2d((4, 4))
-        self.head = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(128 * 4 * 4, 256),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.4),
-            nn.Linear(256, n_classes),
+        self.classifier = nn.Sequential(
+            nn.Flatten(),        # index 0
+            nn.Dropout(0.5),     # index 1
+            nn.Linear(128 * 4 * 4, 256),  # index 2
+            nn.ReLU(inplace=True),         # index 3
+            nn.Dropout(0.4),               # index 4
+            nn.Linear(256, n_classes),     # index 5
         )
     def forward(self, x):
-        return self.block(x) if False else self.head(self.pool(self.features(x)))
+        return self.classifier(self.pool(self.conv_layers(x)))
 
 # ══════════════════════════════════════════════════════════════════════════
 #  HELPERS
 # ══════════════════════════════════════════════════════════════════════════
 
 def load_model(name: str) -> InstrumentCNN:
-    path = (MODELS_DIR / f"{name}.pth").resolve()
-    if not path.exists():
-        raise FileNotFoundError(f"Modèle introuvable : {path}")
+    # Supporte .pth et .pt
+    path = None
+    for ext in (".pth", ".pt"):
+        candidate = (MODELS_DIR / f"{name}{ext}").resolve()
+        if candidate.exists():
+            path = candidate
+            break
+    if path is None:
+        raise FileNotFoundError(f"Modele introuvable : {MODELS_DIR / name}(.pth|.pt)")
     model = InstrumentCNN(n_classes=len(INSTRUMENTS))
     state = torch.load(path, map_location="cpu", weights_only=True)
     model.load_state_dict(state)
@@ -126,16 +136,49 @@ def load_model(name: str) -> InstrumentCNN:
     return model
 
 
-def load_audio(path: str) -> torch.Tensor:
+def load_audio_from_stdin() -> torch.Tensor:
     """
-    Charge le fichier, resampler à SAMPLE_RATE, convertit en mono.
-    Retourne waveform (1, N).
+    Lit les bytes audio depuis sys.stdin.
+    Attend du PCM WAV (encodé par le navigateur via AudioContext avant envoi).
+    Décodage avec le module 'wave' de la stdlib — zéro dépendance externe.
+    Retourne waveform float32 (1, N) resampleé à SAMPLE_RATE.
     """
-    waveform, sr = torchaudio.load(path)
-    if sr != SAMPLE_RATE:
-        waveform = torchaudio.functional.resample(waveform, sr, SAMPLE_RATE)
+    import wave
+    import struct
+    import numpy as np
+
+    raw = sys.stdin.buffer.read()
+    buf = io.BytesIO(raw)
+
+    with wave.open(buf) as wf:
+        n_channels   = wf.getnchannels()
+        sample_width = wf.getsampwidth()   # bytes par sample
+        sr           = wf.getframerate()
+        n_frames     = wf.getnframes()
+        raw_pcm      = wf.readframes(n_frames)
+
+    # Décode selon la profondeur de bits
+    if sample_width == 2:       # 16-bit PCM — le plus courant
+        samples = np.frombuffer(raw_pcm, dtype=np.int16).astype(np.float32) / 32768.0
+    elif sample_width == 4:     # 32-bit int
+        samples = np.frombuffer(raw_pcm, dtype=np.int32).astype(np.float32) / 2147483648.0
+    elif sample_width == 1:     # 8-bit unsigned
+        samples = (np.frombuffer(raw_pcm, dtype=np.uint8).astype(np.float32) - 128.0) / 128.0
+    else:
+        raise ValueError(f"sample_width={sample_width} non supporté")
+
+    # Reshape en (channels, samples) puis moyenne → mono
+    samples  = samples.reshape(-1, n_channels).T       # (channels, samples)
+    waveform = torch.from_numpy(np.ascontiguousarray(samples))
     if waveform.shape[0] > 1:
         waveform = waveform.mean(dim=0, keepdim=True)
+    else:
+        waveform = waveform[:1]
+
+    # Resample si nécessaire
+    if sr != SAMPLE_RATE:
+        waveform = torchaudio.functional.resample(waveform, sr, SAMPLE_RATE)
+
     return waveform
 
 
@@ -261,12 +304,11 @@ def run_inference(
 # ══════════════════════════════════════════════════════════════════════════
 
 def main():
-    if len(sys.argv) != 4:
-        _die(f"Usage: eval.py <audio_path> <model_name> <binary_mode>")
+    if len(sys.argv) != 3:
+        _die(f"Usage: eval.py <model_name> <binary_mode>  (audio via stdin)")
 
-    audio_path   = sys.argv[1]
-    model_name   = sys.argv[2]
-    binary_mode  = sys.argv[3].lower() == "true"
+    model_name   = sys.argv[1]
+    binary_mode  = sys.argv[2].lower() == "true"
 
     t0 = time.perf_counter()
 
@@ -276,9 +318,9 @@ def main():
         _die(str(e))
 
     try:
-        waveform = load_audio(audio_path)
+        waveform = load_audio_from_stdin()
     except Exception as e:
-        _die(f"Impossible de lire l'audio : {e}")
+        _die(f"Impossible de lire l'audio depuis stdin : {e}")
 
     duration_s = waveform.shape[1] / SAMPLE_RATE
     windows    = slice_windows(waveform)

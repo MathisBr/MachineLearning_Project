@@ -7,6 +7,10 @@ Dataset_npy/
 *.json
 *.zip
 
+Models/
+*.pt
+*.pth
+
 # Python
 __pycache__/
 *.py[cod]
@@ -26,6 +30,9 @@ build/
 *.swp
 *.swo
 *~
+
+# Environnement virtuel
+.venv/
 
 # Jupyter Notebook
 .ipynb_checkpoints/

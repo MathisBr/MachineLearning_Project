@@ -216,11 +216,37 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
 .tl-row{display:flex;align-items:center;gap:.75rem}
 .tl-row-label{width:110px;flex-shrink:0;font-size:11px;color:var(--gray);font-family:var(--mono);text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:5px}
 .tl-row-label .dot{width:8px;height:8px;border-radius:50%}
-.tl-track{flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:5px;position:relative;overflow:hidden}
+.tl-track{flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:5px;position:relative;overflow:visible}
 .tl-seg{position:absolute;top:3px;bottom:3px;border-radius:3px;transition:opacity .2s;cursor:pointer}
 .tl-seg:hover{opacity:.8 !important;outline:2px solid rgba(255,255,255,.3)}
-.tl-seg-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0D2D42;border:1px solid rgba(40,170,225,.3);border-radius:5px;padding:4px 8px;font-size:10px;font-family:var(--mono);color:var(--blue);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20}
-.tl-seg:hover .tl-seg-tooltip{opacity:1}
+/* Global floating tooltip — positionné via JS, jamais clipé */
+#tl-tooltip{
+  position:fixed;
+  background:rgba(8,23,38,.97);
+  border:1px solid rgba(40,170,225,.35);
+  border-radius:10px;
+  padding:10px 13px;
+  font-size:10px;font-family:var(--mono);
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s;
+  z-index:9999;
+  box-shadow:0 6px 24px rgba(0,0,0,.6);
+  min-width:140px;
+}
+#tl-tooltip.show{opacity:1}
+#tl-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:rgba(40,170,225,.35);
+}
+.tl-tt-time{color:var(--gray);margin-bottom:6px;font-size:9px;letter-spacing:.5px;border-bottom:1px solid rgba(40,170,225,.15);padding-bottom:5px}
+.tl-tt-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:3px}
+.tl-tt-row:last-child{margin-bottom:0}
+.tl-tt-label{display:flex;align-items:center;gap:4px;color:rgba(255,255,255,.7)}
+.tl-tt-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.tl-tt-bar{height:100%;border-radius:2px}
+.tl-tt-pct{color:var(--blue);min-width:32px;text-align:right}
+.tl-tt-winner .tl-tt-label{color:#fff;font-weight:700}
+.tl-tt-winner .tl-tt-pct{color:var(--accent)}
 
 /* Time axis */
 .tl-axis{display:flex;align-items:flex-start;padding-left:118px;margin-top:4px}
@@ -242,10 +268,24 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
 .res-dl{font-size:.8rem;color:var(--blue);font-weight:600;margin-top:.25rem}
 .note{margin-top:2rem;padding:1.25rem 1.5rem;background:rgba(40,170,225,.05);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;font-size:.83rem;color:var(--gray);line-height:1.7}
 .note strong{color:var(--blue)}
+
+/* ── API status indicator (header right) ── */
+.api-status-indicator{display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border-radius:20px;border:1px solid rgba(40,170,225,.15);transition:all .2s;flex-shrink:0}
+.api-status-indicator:hover{border-color:rgba(40,170,225,.35);background:rgba(40,170,225,.07)}
+.api-status-dot{width:9px;height:9px;border-radius:50%;background:#888;transition:background .4s;flex-shrink:0}
+.api-status-dot.ok{background:var(--green);box-shadow:0 0 6px rgba(46,204,113,.7);animation:glow-dot 2s ease-in-out infinite}
+.api-status-dot.err{background:var(--red);box-shadow:0 0 6px rgba(255,71,87,.6)}
+.api-status-dot.checking{background:#f39c12;animation:blink 0.6s step-end infinite}
+.api-status-hint{font-family:var(--mono);font-size:10px;color:var(--gray);letter-spacing:1px}
+
+/* ── Analyse trigger bar ── */
+.analyse-trigger-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;background:rgba(40,170,225,.06);border:1px solid rgba(40,170,225,.2);border-radius:var(--r);margin-bottom:1.25rem}
+.analyse-trigger-left{font-size:.85rem;color:var(--gray);font-family:var(--mono);font-size:12px}
 </style>
 </head>
 <body>
 
+<div id="tl-tooltip"></div>
 <header>
   <div class="logo-wrap">
     <a href="https://www.esiea.fr/ecole/campus-laval/" target="_blank" rel="noopener" class="logo-esiea">
@@ -262,6 +302,10 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
     <button onclick="navigate('analyse')"      data-page="analyse">Analyse <span class="nav-badge" id="badge-ana"></span></button>
     <button onclick="navigate('ressources')"   data-page="ressources">Ressources</button>
   </nav>
+  <div class="api-status-indicator" id="apiStatusIndicator" title="Statut API — cliquer pour tester" onclick="quickPing()">
+    <div class="api-status-dot" id="apiStatusDot"></div>
+    <span class="api-status-hint" id="apiStatusHint">API</span>
+  </div>
 </header>
 
 <main id="main">
@@ -368,6 +412,12 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
       <span class="switch-label-text">Binaire</span>
       <span class="switch-badge" id="binaryBadge">OFF</span>
     </div>
+  </div>
+
+  <!-- Analyze trigger bar -->
+  <div class="analyse-trigger-bar" id="analyseTriggerBar" style="display:none">
+    <div class="analyse-trigger-left" id="analyseTriggerFile">— Aucun fichier chargé</div>
+    <button class="btn btn-blue" onclick="runAnalysis()">&#9654; Analyser</button>
   </div>
 
   <!-- States -->
@@ -516,7 +566,30 @@ function navigate(id) {
   document.getElementById('main').scrollTop = 0;
   if(id==='enregistreur') refreshRecPage();
   if(id==='analyse')      refreshAnalysePage();
-  if(id==='accueil')      refreshHero();
+  if(id==='accueil')      
+// ══════════════════════════════════════════════════════
+//  WAV ENCODER (stdlib-compatible, PCM 16-bit)
+// ══════════════════════════════════════════════════════
+function encodeWAV(samples, sr) {
+  const buf    = new ArrayBuffer(44 + samples.length * 2);
+  const view   = new DataView(buf);
+  const write  = (o,s) => { for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+  const u32    = (o,v) => view.setUint32(o, v, true);
+  const u16    = (o,v) => view.setUint16(o, v, true);
+  write(0,'RIFF'); u32(4, 36 + samples.length*2); write(8,'WAVE');
+  write(12,'fmt '); u32(16,16); u16(20,1); u16(22,1);
+  u32(24,sr); u32(28,sr*2); u16(32,2); u16(34,16);
+  write(36,'data'); u32(40, samples.length*2);
+  let offset = 44;
+  for(let i=0;i<samples.length;i++){
+    const s = Math.max(-1,Math.min(1,samples[i]));
+    view.setInt16(offset, s<0 ? s*0x8000 : s*0x7FFF, true);
+    offset += 2;
+  }
+  return new Blob([buf], {type:'audio/wav'});
+}
+
+refreshHero();
 }
 
 // ══════════════════════════════════════════════════════
@@ -614,10 +687,28 @@ async function toggleRec(){
       const stream=await navigator.mediaDevices.getUserMedia({audio:true});
       mediaRecorder=new MediaRecorder(stream); recChunks=[];
       mediaRecorder.ondataavailable=e=>recChunks.push(e.data);
-      mediaRecorder.onstop=()=>{
-        const blob=new Blob(recChunks,{type:'audio/wav'});
-        const ts=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
-        setAudio(blob,`enregistrement_${ts}.wav`,'mic'); refreshRecPage();
+      mediaRecorder.onstop=async()=>{
+        // Le navigateur enregistre en webm/opus — on ré-encode en WAV 16kHz mono
+        // via AudioContext pour que eval.py (stdlib wave) puisse le décoder
+        const rawBlob = new Blob(recChunks, {type: mediaRecorder.mimeType});
+        const arrayBuf = await rawBlob.arrayBuffer();
+        const ac = new (window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
+        const decoded = await ac.decodeAudioData(arrayBuf);
+        await ac.close();
+
+        // Render offline à 16kHz mono
+        const offline = new OfflineAudioContext(1, decoded.length * 16000 / decoded.sampleRate, 16000);
+        const src = offline.createBufferSource();
+        src.buffer = decoded;
+        src.connect(offline.destination);
+        src.start();
+        const rendered = await offline.startRendering();
+
+        // Encode en WAV PCM 16-bit
+        const wavBlob = encodeWAV(rendered.getChannelData(0), 16000);
+        const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+        setAudio(wavBlob, `enregistrement_${ts}.wav`, 'mic');
+        refreshRecPage();
       };
       mediaRecorder.start(); btn.classList.add('rec');
       document.getElementById('micLabel').textContent="Arrêter l'enregistrement";
@@ -638,23 +729,58 @@ function downloadAudio(){if(!state.blob)return;const a=document.createElement('a
 // ══════════════════════════════════════════════════════
 //  ANALYSE
 // ══════════════════════════════════════════════════════
+// Shared ping logic — updates both header dot and analyse-page dot
+async function doPing(baseUrl) {
+  try {
+    const r = await fetch(baseUrl + '/health', {signal: AbortSignal.timeout(3000)});
+    return r.ok;
+  } catch { return false; }
+}
+
+// Full ping — updates analyse page api-bar
 async function pingApi(){
-  const dot=document.getElementById('apiDot'),lbl=document.getElementById('apiLabel');
+  const dot=document.getElementById('apiDot'), lbl=document.getElementById('apiLabel');
   dot.className='api-dot'; lbl.innerHTML='vérification...';
   const base=document.getElementById('apiUrl').value.replace(/\/$/,'');
-  try{
-    const r=await fetch(base+'/health',{signal:AbortSignal.timeout(3000)});
-    if(r.ok){dot.className='api-dot ok';lbl.innerHTML='<strong>connectée ✓</strong>';}
-    else throw new Error('HTTP '+r.status);
-  }catch(e){dot.className='api-dot err';lbl.innerHTML=`<strong>inaccessible</strong> — ${e.message}`;}
+  const ok = await doPing(base);
+  if(ok){ dot.className='api-dot ok'; lbl.innerHTML='<strong>connectée ✓</strong>'; }
+  else  { dot.className='api-dot err'; lbl.innerHTML='<strong>inaccessible</strong>'; }
+  updateHeaderDot(ok);
+}
+
+// Quick ping — header dot only, silent
+async function quickPing(){
+  const hdot = document.getElementById('apiStatusDot');
+  const hint = document.getElementById('apiStatusHint');
+  hdot.className = 'api-status-dot checking'; hint.textContent='...';
+  const base = (document.getElementById('apiUrl')?.value || 'http://localhost:5000').replace(/\/$/,'');
+  const ok = await doPing(base);
+  updateHeaderDot(ok);
+}
+
+function updateHeaderDot(ok){
+  const hdot = document.getElementById('apiStatusDot');
+  const hint = document.getElementById('apiStatusHint');
+  if(ok){ hdot.className='api-status-dot ok'; hint.textContent='ON'; }
+  else  { hdot.className='api-status-dot err'; hint.textContent='OFF'; }
 }
 
 function refreshAnalysePage(){
   document.getElementById('loadingState').classList.remove('show');
   document.getElementById('errorState').classList.remove('show');
   document.getElementById('resultState').classList.remove('show');
-  if(!state.blob){document.getElementById('noAudioState').style.display='flex';}
-  else{document.getElementById('noAudioState').style.display='none';if(state.lastResult)renderResult(state.lastResult);}
+  // Trigger bar
+  const bar = document.getElementById('analyseTriggerBar');
+  const fileLbl = document.getElementById('analyseTriggerFile');
+  if(state.blob){
+    bar.style.display = 'flex';
+    fileLbl.textContent = state.filename;
+    document.getElementById('noAudioState').style.display='none';
+    if(state.lastResult) renderResult(state.lastResult);
+  } else {
+    bar.style.display = 'none';
+    document.getElementById('noAudioState').style.display='flex';
+  }
 }
 
 async function startAnalysis(){if(!state.blob)return;navigate('analyse');await runAnalysis();}
@@ -776,6 +902,52 @@ function toggleTimeline(){
   document.getElementById('timelineToggle').classList.toggle('open',state.timelineOpen);
 }
 
+// ══════════════════════════════════════════════════════
+//  TIMELINE SEGMENT TOOLTIP — bulle fixe suivant la souris
+// ══════════════════════════════════════════════════════
+const _tt = document.getElementById('tl-tooltip');
+
+function showSegTooltip(e) {
+  const seg    = e.currentTarget;
+  const start  = seg.dataset.winStart;
+  const end    = seg.dataset.winEnd;
+  const scores = JSON.parse(seg.dataset.scores);
+
+  const top3 = Object.entries(scores)
+    .map(([k,v]) => ({key:k, score:parseFloat(v), meta:INST_META[k]}))
+    .sort((a,b) => b.score - a.score)
+    .slice(0,3);
+  const maxScore = top3[0].score || 1;
+
+  const rows = top3.map((item, i) => {
+    const pct  = Math.round(item.score * 100);
+    const barW = Math.round((item.score / maxScore) * 100);
+    const cls  = i === 0 ? 'tl-tt-winner' : '';
+    return `<div class="tl-tt-row ${cls}">
+      <div class="tl-tt-label">${item.meta.emoji} ${item.key.toUpperCase()}</div>
+      <div class="tl-tt-bar-wrap"><div class="tl-tt-bar" style="width:${barW}%;background:${item.meta.color}"></div></div>
+      <div class="tl-tt-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  _tt.innerHTML = `<div class="tl-tt-time">⏱ ${start}s — ${end}s</div>${rows}`;
+  _tt.classList.add('show');
+  positionTooltip(e);
+}
+
+function moveSegTooltip(e)  { positionTooltip(e); }
+function hideSegTooltip()   { _tt.classList.remove('show'); }
+
+function positionTooltip(e) {
+  const tw = _tt.offsetWidth, th = _tt.offsetHeight;
+  let x = e.clientX - tw / 2;
+  let y = e.clientY - th - 18;
+  x = Math.max(8, Math.min(x, window.innerWidth  - tw - 8));
+  y = Math.max(8, Math.min(y, window.innerHeight - th - 8));
+  _tt.style.left = x + 'px';
+  _tt.style.top  = y + 'px';
+}
+
 function buildTimeline(data){
   const inner=document.getElementById('timelineInner');
   inner.innerHTML='';
@@ -817,7 +989,14 @@ function buildTimeline(data){
       const seg=document.createElement('div');
       seg.className='tl-seg';
       seg.style.cssText=`left:${leftPct}%;width:${widthPct}%;background:${m.color};opacity:${opacity}`;
-      seg.innerHTML=`<div class="tl-seg-tooltip">${win.start_s.toFixed(1)}s–${win.end_s.toFixed(1)}s · ${Math.round(score*100)}%</div>`;
+      // Store window data on the segment for tooltip
+      seg.dataset.winStart = win.start_s.toFixed(1);
+      seg.dataset.winEnd   = win.end_s.toFixed(1);
+      seg.dataset.scores   = JSON.stringify(win.scores);
+
+      seg.addEventListener('mouseenter', showSegTooltip);
+      seg.addEventListener('mousemove',  moveSegTooltip);
+      seg.addEventListener('mouseleave', hideSegTooltip);
       track.appendChild(seg);
     });
 
