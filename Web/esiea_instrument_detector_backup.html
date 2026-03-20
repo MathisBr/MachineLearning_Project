@@ -254,15 +254,6 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
 .tl-tick{position:absolute;font-size:9px;font-family:var(--mono);color:var(--gray);transform:translateX(-50%)}
 .tl-tick::before{content:'';display:block;width:1px;height:4px;background:rgba(40,170,225,.3);margin:0 auto 2px}
 
-
-/* ── Presence chart ── */
-.presence-chart-wrap{margin-top:1.5rem;background:rgba(8,23,38,.6);border:1px solid rgba(40,170,225,.12);border-radius:var(--r);padding:1.25rem 1.25rem .75rem}
-.presence-chart-title{font-size:.8rem;font-family:var(--mono);color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem}
-.presence-chart-canvas-wrap{position:relative;width:100%;height:180px}
-#presenceChart{width:100%!important;height:180px!important}
-.presence-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.75rem}
-.presence-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--gray)}
-.presence-legend-line{width:18px;height:3px;border-radius:2px;flex-shrink:0}
 .result-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
 
 /* ══ RESSOURCES ══ */
@@ -290,51 +281,7 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
 /* ── Analyse trigger bar ── */
 .analyse-trigger-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;background:rgba(40,170,225,.06);border:1px solid rgba(40,170,225,.2);border-radius:var(--r);margin-bottom:1.25rem}
 .analyse-trigger-left{font-size:.85rem;color:var(--gray);font-family:var(--mono);font-size:12px}
-
-/* ══ LIVE DETECTION PAGE ══ */
-
-/* Launch card */
-.live-launch-card{display:flex;align-items:center;gap:1.25rem;padding:1.5rem 1.75rem;background:rgba(13,45,66,.55);border:1px solid rgba(40,170,225,.12);border-radius:var(--r);flex-wrap:wrap}
-.live-launch-icon{font-size:2.5rem;flex-shrink:0}
-.live-launch-title{font-size:1rem;font-weight:600;margin-bottom:.25rem}
-.live-launch-sub{font-size:.8rem;color:var(--gray);font-family:var(--mono)}
-.live-launch-text{flex:1;min-width:140px}
-
-/* Init */
-.live-init-wrap{display:flex;flex-direction:column;align-items:center;padding:3.5rem 0;gap:1.5rem}
-
-/* Now bar */
-.live-now-bar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:.75rem 1.25rem;background:rgba(40,170,225,.06);border:1px solid rgba(40,170,225,.15);border-radius:var(--rs);margin-bottom:1.25rem;font-size:.8rem}
-.live-now-left{display:flex;align-items:center;gap:.5rem;font-family:var(--mono);color:var(--gray)}
-.live-now-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:blink 1s step-end infinite}
-.live-now-time{color:var(--blue);font-weight:600}
-.live-now-winner{font-size:1rem;font-weight:700;color:#fff;flex:1;text-align:center;letter-spacing:-.5px;transition:all .3s}
-.live-now-window{font-family:var(--mono);font-size:10px;color:var(--gray)}
-
-/* Live bars */
-.live-bars{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
-.live-bar-row{display:grid;grid-template-columns:170px 1fr 68px;align-items:center;gap:.9rem;padding:.9rem 1.25rem;background:rgba(13,45,66,.4);border-radius:var(--rs);border:1px solid rgba(40,170,225,.07);transition:border-color .25s,background .25s}
-.live-bar-row.live-win{background:rgba(40,170,225,.1);border-color:rgba(40,170,225,.32)}
-.live-bar-lbl{display:flex;align-items:center;gap:8px}
-.live-bar-emoji{font-size:1.3rem}
-.live-bar-name{font-weight:600;font-size:.9rem;display:block}
-.live-bar-code{font-family:var(--mono);font-size:9px;color:var(--gray);display:block}
-.live-bar-track{height:12px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
-.live-bar-fill{height:100%;border-radius:6px;transition:width .35s cubic-bezier(.4,0,.2,1);width:0%}
-.live-bar-pct{font-family:var(--mono);font-size:15px;font-weight:700;text-align:right;transition:color .25s;color:var(--blue)}
-
-/* Progress bar with window markers */
-.live-audio-section{margin-top:.5rem}
-.live-progress-wrap{position:relative;padding-bottom:1.4rem}
-.live-progress-track{height:6px;background:rgba(40,170,225,.1);border-radius:3px;position:relative;overflow:visible;margin-bottom:.3rem}
-.live-progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--blue),var(--accent));border-radius:3px;transition:width .1s linear;width:0%}
-.live-progress-cursor{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px rgba(40,170,225,.7);transition:left .1s linear;left:0%}
-.live-progress-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--gray)}
-.live-markers{position:absolute;top:0;left:0;right:0;height:6px;pointer-events:none}
-.live-marker{position:absolute;top:-3px;width:2px;height:12px;background:rgba(255,255,255,.2);border-radius:1px;transform:translateX(-50%)}
-.live-marker.live-marker-active{background:var(--blue);box-shadow:0 0 6px rgba(40,170,225,.5)}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -352,7 +299,6 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
   <nav>
     <button onclick="navigate('accueil')"      data-page="accueil"      class="active">Accueil</button>
     <button onclick="navigate('enregistreur')" data-page="enregistreur">Enregistreur <span class="nav-badge" id="badge-rec"></span></button>
-    <button onclick="navigate('live')"         data-page="live">Live Detection <span class="nav-badge" id="badge-live"></span> <span style="font-size:9px;opacity:.55;font-family:var(--mono);margin-left:2px">β</span></button>
     <button onclick="navigate('analyse')"      data-page="analyse">Analyse <span class="nav-badge" id="badge-ana"></span></button>
     <button onclick="navigate('ressources')"   data-page="ressources">Ressources</button>
   </nav>
@@ -512,133 +458,12 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
       <div class="timeline-inner" id="timelineInner"></div>
     </div>
 
-    <!-- Presence chart -->
-    <div class="presence-chart-wrap" id="presenceChartWrap" style="display:none">
-      <div class="presence-chart-title">Présence par instrument (% / fenêtre)</div>
-      <div class="presence-chart-canvas-wrap">
-        <canvas id="presenceChart"></canvas>
-      </div>
-      <div class="presence-legend" id="presenceLegend"></div>
-    </div>
-
     <div class="result-actions">
       <button class="btn btn-outline btn-sm" onclick="navigate('enregistreur')">↩ Nouveau fichier</button>
       <button class="btn btn-ghost btn-sm"   onclick="reanalyze()">↻ Relancer</button>
     </div>
   </div>
 </div>
-
-
-
-<!-- ══ LIVE DETECTION ══ -->
-<div class="page" id="page-live">
-  <div class="page-header">
-    <div class="page-label">/ 02 — live detection <span style="font-family:var(--mono);font-size:9px;color:rgba(40,170,225,.5);margin-left:4px">β</span></div>
-    <h2 class="page-title">Live Detection</h2>
-    <p class="page-sub">Configurez l'analyse, lancez — le modèle s'initialise puis joue l'audio avec les scores en direct.</p>
-  </div>
-
-  <!-- No audio state -->
-  <div class="no-audio-state" id="liveNoAudio">
-    <div class="no-audio-icon">🎙️</div>
-    <div class="no-audio-text">Aucun fichier chargé. Allez dans <strong>Enregistreur</strong> pour importer ou capturer un son.</div>
-    <button class="btn btn-outline btn-sm" onclick="navigate('enregistreur')">Aller à l'enregistreur</button>
-  </div>
-
-  <!-- Config + player — visible only when audio loaded -->
-  <div id="liveMain" style="display:none">
-
-    <!-- API bar (same as analyse) -->
-    <div class="api-bar">
-      <div class="api-dot" id="liveApiDot"></div>
-      <div class="api-label">API : <strong id="liveApiLabel">non vérifiée</strong></div>
-      <input class="api-url" id="liveApiUrl" type="text" value="http://localhost:5000">
-      <button class="btn btn-ghost btn-sm" onclick="pingLiveApi()">Tester →</button>
-    </div>
-
-    <!-- Options row -->
-    <div class="options-row" style="margin-bottom:1.5rem">
-      <div class="model-select-wrap">
-        <span class="model-label">Modèle</span>
-        <select class="model-select" id="liveModelSelect">
-          <option value="LilDrill">LilDrill</option>
-          <option value="Brrrevet">Brrrevet</option>
-          <option value="Silver">Silver</option>
-          <option value="MonkI">MonkI</option>
-        </select>
-      </div>
-      <div class="switch-wrap" id="liveBinarySwitch" onclick="toggleLiveBinary()">
-        <div class="switch-track"><div class="switch-thumb"></div></div>
-        <span class="switch-label-text">Binaire</span>
-        <span class="switch-badge" id="liveBinaryBadge">OFF</span>
-      </div>
-    </div>
-
-    <!-- Launch button — idle state -->
-    <div id="liveIdleState">
-      <div class="live-launch-card">
-        <div class="live-launch-icon">🎬</div>
-        <div class="live-launch-text">
-          <div class="live-launch-title">Prêt à lancer</div>
-          <div class="live-launch-sub" id="liveLaunchFile">—</div>
-        </div>
-        <button class="btn btn-blue" id="liveLaunchBtn" onclick="launchLive()">
-          ▶ Lancer la Live Detection
-        </button>
-      </div>
-    </div>
-
-    <!-- Init state -->
-    <div id="liveInitState" style="display:none">
-      <div class="live-init-wrap">
-        <div class="rings"><span></span><span></span><span></span><div class="dot"></div></div>
-        <div class="loading-lbl" id="liveInitLbl">Initialisation du modèle...</div>
-        <div class="loading-sub" id="liveInitSub">Chargement des poids · Découpage fenêtres 3s</div>
-      </div>
-    </div>
-
-    <!-- Player state — shown after init -->
-    <div id="livePlayerState" style="display:none">
-
-      <!-- Current window badge -->
-      <div class="live-now-bar">
-        <div class="live-now-left">
-          <span class="live-now-dot" id="liveNowDot"></span>
-          <span class="live-now-label">En cours</span>
-          <span class="live-now-time" id="liveNowTime">0.0s</span>
-        </div>
-        <div class="live-now-winner" id="liveNowWinner">—</div>
-        <div class="live-now-window">Fenêtre <span id="liveNowWin">—</span> / <span id="liveNowTotal">—</span></div>
-      </div>
-
-      <!-- Big animated bars -->
-      <div class="live-bars" id="liveBarsContainer"></div>
-
-      <!-- Audio player + progress -->
-      <div class="live-audio-section">
-        <audio id="liveAudioEl" controls style="width:100%;border-radius:8px;margin-bottom:.75rem;filter:none"></audio>
-        <div class="live-progress-wrap">
-          <div class="live-progress-track">
-            <div class="live-progress-fill" id="liveProgressFill"></div>
-            <div class="live-progress-cursor" id="liveProgressCursor"></div>
-          </div>
-          <div class="live-progress-labels">
-            <span>0s</span><span id="liveProgressDur">—</span>
-          </div>
-          <!-- Window markers -->
-          <div class="live-markers" id="liveMarkers"></div>
-        </div>
-      </div>
-
-      <!-- Reset button -->
-      <div style="margin-top:1.25rem">
-        <button class="btn btn-outline btn-sm" onclick="resetLive()">↩ Reconfigurer</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 
 <!-- ══ RESSOURCES ══ -->
 <div class="page" id="page-ressources">
@@ -741,10 +566,7 @@ function navigate(id) {
   document.getElementById('main').scrollTop = 0;
   if(id==='enregistreur') refreshRecPage();
   if(id==='analyse')      refreshAnalysePage();
-  if(id==='live')         refreshLivePage();
-  if(id==='accueil')      refreshHero();
-}
-
+  if(id==='accueil')      
 // ══════════════════════════════════════════════════════
 //  WAV ENCODER (stdlib-compatible, PCM 16-bit)
 // ══════════════════════════════════════════════════════
@@ -767,308 +589,8 @@ function encodeWAV(samples, sr) {
   return new Blob([buf], {type:'audio/wav'});
 }
 
-
-// ══════════════════════════════════════════════════════
-//  PRESENCE CHART
-// ══════════════════════════════════════════════════════
-let _presenceChart = null;
-
-function buildPresenceChart(data) {
-  const wrap = document.getElementById('presenceChartWrap');
-  const tl   = data.timeline;
-  if (!tl || tl.length === 0) { wrap.style.display = 'none'; return; }
-  wrap.style.display = 'block';
-
-  // X axis : midpoint of each window in seconds
-  const labels = tl.map(w => ((w.start_s + w.end_s) / 2).toFixed(1) + 's');
-
-  // One dataset per instrument
-  const datasets = INSTRUMENTS.map(key => {
-    const meta   = INST_META[key];
-    const values = tl.map(w => Math.round((w.scores[key] || 0) * 100));
-    return {
-      label:           meta.emoji + ' ' + key.toUpperCase(),
-      data:            values,
-      borderColor:     meta.color,
-      backgroundColor: meta.color + '22',
-      borderWidth:     2,
-      pointRadius:     4,
-      pointHoverRadius: 6,
-      pointBackgroundColor: meta.color,
-      tension:         0.35,
-      fill:            false,
-    };
-  });
-
-  // Destroy previous chart if exists
-  if (_presenceChart) { _presenceChart.destroy(); _presenceChart = null; }
-
-  const ctx = document.getElementById('presenceChart').getContext('2d');
-  _presenceChart = new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive:          true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(8,23,38,.97)',
-          borderColor:     'rgba(40,170,225,.35)',
-          borderWidth:     1,
-          titleColor:      '#6ba8c4',
-          bodyColor:       '#fff',
-          padding:         10,
-          callbacks: {
-            label: ctx => ` ${ctx.dataset.label}  ${ctx.parsed.y}%`,
-          },
-        },
-      },
-      scales: {
-        x: {
-          grid:  { color: 'rgba(40,170,225,.07)' },
-          ticks: { color: '#6ba8c4', font: { family: "'Space Mono', monospace", size: 10 } },
-        },
-        y: {
-          min: 0, max: 100,
-          grid:  { color: 'rgba(40,170,225,.07)' },
-          ticks: {
-            color: '#6ba8c4',
-            font:  { family: "'Space Mono', monospace", size: 10 },
-            callback: v => v + '%',
-            stepSize: 25,
-          },
-        },
-      },
-    },
-  });
-
-  // Legend
-  const leg = document.getElementById('presenceLegend');
-  leg.innerHTML = INSTRUMENTS.map(key => {
-    const m = INST_META[key];
-    return `<div class="presence-legend-item">
-      <div class="presence-legend-line" style="background:${m.color}"></div>
-      ${m.emoji} ${key.toUpperCase()} — ${m.name}
-    </div>`;
-  }).join('');
-}
-
-
-// ══════════════════════════════════════════════════════
-//  LIVE DETECTION
-// ══════════════════════════════════════════════════════
-const liveState = {
-  binaryMode: false,
-  data:       null,   // result from API
-  rafId:      null,   // requestAnimationFrame id
-};
-
-function refreshLivePage() {
-  const noAudio = document.getElementById('liveNoAudio');
-  const main    = document.getElementById('liveMain');
-  if (!state.blob) {
-    noAudio.style.display = 'flex';
-    main.style.display    = 'none';
-  } else {
-    noAudio.style.display = 'none';
-    main.style.display    = 'block';
-    document.getElementById('liveLaunchFile').textContent = state.filename || '—';
-    // Sync API url from analyse tab
-    const analyseUrl = document.getElementById('apiUrl')?.value;
-    if (analyseUrl) document.getElementById('liveApiUrl').value = analyseUrl;
-  }
-}
-
-async function pingLiveApi() {
-  const dot = document.getElementById('liveApiDot');
-  const lbl = document.getElementById('liveApiLabel');
-  dot.className = 'api-dot'; lbl.innerHTML = 'vérification...';
-  const base = document.getElementById('liveApiUrl').value.replace(/\/$/,'');
-  const ok   = await doPing(base);
-  if (ok) { dot.className='api-dot ok'; lbl.innerHTML='<strong>connectée ✓</strong>'; }
-  else    { dot.className='api-dot err'; lbl.innerHTML='<strong>inaccessible</strong>'; }
-  updateHeaderDot(ok);
-}
-
-function toggleLiveBinary() {
-  liveState.binaryMode = !liveState.binaryMode;
-  document.getElementById('liveBinarySwitch').classList.toggle('on', liveState.binaryMode);
-  document.getElementById('liveBinaryBadge').textContent = liveState.binaryMode ? 'ON' : 'OFF';
-}
-
-// ── LAUNCH ──────────────────────────────────────────────────────
-const LIVE_INIT_STEPS = [
-  ['Initialisation du modèle...', 'Chargement des poids · vérification architecture'],
-  ['Découpage en fenêtres...', 'Sliding window 3s · overlap 0%'],
-  ['Inférence par fenêtre...', 'CNN forward pass × n_windows'],
-  ['Préparation de la lecture...', 'Synchronisation audio ↔ scores'],
-];
-
-async function launchLive() {
-  if (!state.blob) return;
-
-  // Switch to init UI
-  document.getElementById('liveIdleState').style.display   = 'none';
-  document.getElementById('liveInitState').style.display   = 'flex';
-  document.getElementById('livePlayerState').style.display = 'none';
-
-  // Animate init steps while API runs
-  let step = 0;
-  const iv = setInterval(() => {
-    if (step < LIVE_INIT_STEPS.length) {
-      document.getElementById('liveInitLbl').textContent = LIVE_INIT_STEPS[step][0];
-      document.getElementById('liveInitSub').textContent = LIVE_INIT_STEPS[step][1];
-      step++;
-    }
-  }, 800);
-
-  try {
-    const modelName = document.getElementById('liveModelSelect').value;
-    const binaryStr = liveState.binaryMode ? 'true' : 'false';
-    const form      = new FormData();
-    form.append('audio',       state.blob, state.filename);
-    form.append('model',       modelName);
-    form.append('binary_mode', binaryStr);
-
-    const base = document.getElementById('liveApiUrl').value.replace(/\/$/,'');
-    const res  = await fetch(base + '/predict', { method:'POST', body:form });
-    clearInterval(iv);
-
-    if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + await res.text());
-
-    liveState.data = await res.json();
-    document.getElementById('liveInitState').style.display = 'none';
-    buildLivePlayer(liveState.data);
-
-  } catch(err) {
-    clearInterval(iv);
-    document.getElementById('liveInitState').style.display = 'none';
-    document.getElementById('liveIdleState').style.display = 'block';
-    alert('Erreur API : ' + err.message);
-  }
-}
-
-// ── BUILD PLAYER ─────────────────────────────────────────────────
-function buildLivePlayer(data) {
-  const tl = data.timeline || [];
-  if (!tl.length) return;
-
-  // Setup audio
-  const audio = document.getElementById('liveAudioEl');
-  audio.src = state.objectUrl;
-
-  // Total / windows
-  document.getElementById('liveNowTotal').textContent   = tl.length;
-  document.getElementById('liveProgressDur').textContent = data.duration_s.toFixed(1) + 's';
-
-  // Build bars
-  const barsEl = document.getElementById('liveBarsContainer');
-  barsEl.innerHTML = '';
-  INSTRUMENTS.forEach(key => {
-    const m  = INST_META[key];
-    const el = document.createElement('div');
-    el.className = 'live-bar-row';
-    el.id        = 'lbar-' + key;
-    el.innerHTML = `
-      <div class="live-bar-lbl">
-        <span class="live-bar-emoji">${m.emoji}</span>
-        <div><span class="live-bar-name">${m.name}</span><span class="live-bar-code">${key.toUpperCase()}</span></div>
-      </div>
-      <div class="live-bar-track">
-        <div class="live-bar-fill" id="lfill-${key}" style="background:${m.color}"></div>
-      </div>
-      <div class="live-bar-pct" id="lpct-${key}">0%</div>`;
-    barsEl.appendChild(el);
-  });
-
-  // Build timeline markers
-  const markersEl = document.getElementById('liveMarkers');
-  markersEl.innerHTML = '';
-  tl.forEach((w, i) => {
-    const mk = document.createElement('div');
-    mk.className = 'live-marker';
-    mk.id = 'lmk-' + i;
-    mk.style.left = ((w.start_s / data.duration_s) * 100) + '%';
-    markersEl.appendChild(mk);
-  });
-
-  document.getElementById('livePlayerState').style.display = 'block';
-
-  // Start sync loop
-  if (liveState.rafId) cancelAnimationFrame(liveState.rafId);
-  syncLoop(audio, data);
-
-  // Also sync on seek
-  audio.addEventListener('seeked', () => syncTick(audio, data));
-}
-
-// ── SYNC LOOP ─────────────────────────────────────────────────────
-function syncLoop(audio, data) {
-  syncTick(audio, data);
-  liveState.rafId = requestAnimationFrame(() => syncLoop(audio, data));
-}
-
-function syncTick(audio, data) {
-  const t  = audio.currentTime;
-  const tl = data.timeline;
-  const dur = data.duration_s;
-
-  // Progress bar
-  const pct = dur > 0 ? Math.min(100, (t / dur) * 100) : 0;
-  document.getElementById('liveProgressFill').style.width  = pct + '%';
-  document.getElementById('liveProgressCursor').style.left = pct + '%';
-  document.getElementById('liveNowTime').textContent        = t.toFixed(1) + 's';
-
-  // Find current window
-  let curWin = tl[0];
-  let curIdx = 0;
-  for (let i = 0; i < tl.length; i++) {
-    if (t >= tl[i].start_s) { curWin = tl[i]; curIdx = i; }
-    else break;
-  }
-
-  document.getElementById('liveNowWin').textContent = curIdx + 1;
-
-  // Update markers
-  tl.forEach((w, i) => {
-    const mk = document.getElementById('lmk-' + i);
-    if (mk) mk.classList.toggle('live-marker-active', i === curIdx);
-  });
-
-  // Update bars
-  const scores = curWin.scores || {};
-  const winner = curWin.winner;
-  const winMeta = INST_META[winner] || {};
-
-  document.getElementById('liveNowWinner').textContent = (winMeta.emoji || '') + ' ' + (winMeta.name || winner);
-
-  INSTRUMENTS.forEach(key => {
-    const score  = scores[key] || 0;
-    const pctVal = Math.round(score * 100);
-    const isWin  = key === winner;
-
-    const fillEl = document.getElementById('lfill-' + key);
-    const pctEl  = document.getElementById('lpct-'  + key);
-    const rowEl  = document.getElementById('lbar-'  + key);
-
-    if (fillEl) fillEl.style.width = pctVal + '%';
-    if (pctEl)  { pctEl.textContent = pctVal + '%'; pctEl.style.color = isWin ? 'var(--accent)' : 'var(--blue)'; }
-    if (rowEl)  rowEl.classList.toggle('live-win', isWin);
-  });
-}
-
-function resetLive() {
-  if (liveState.rafId) { cancelAnimationFrame(liveState.rafId); liveState.rafId = null; }
-  const audio = document.getElementById('liveAudioEl');
-  audio.pause(); audio.src = '';
-  liveState.data = null;
-  document.getElementById('livePlayerState').style.display = 'none';
-  document.getElementById('liveIdleState').style.display   = 'block';
-}
-
 refreshHero();
+}
 
 // ══════════════════════════════════════════════════════
 //  AUDIO STATE
@@ -1084,9 +606,8 @@ function clearAudio() {
   updateBadges(); refreshRecPage(); refreshHero();
 }
 function updateBadges() {
-  document.getElementById('badge-rec').classList.toggle('show', !!state.blob);
-  document.getElementById('badge-ana').classList.toggle('show', !!state.lastResult);
-  document.getElementById('badge-live').classList.toggle('show', !!state.blob);
+  document.getElementById('badge-rec').classList.toggle('show',!!state.blob);
+  document.getElementById('badge-ana').classList.toggle('show',!!state.lastResult);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1363,7 +884,6 @@ function renderResult(data){
 
   // ── Build timeline DOM (hidden) ────────────────────
   buildTimeline(data);
-  buildPresenceChart(data);
 
   // Fermer la timeline si elle était ouverte
   const wrap=document.getElementById('timelineWrap');
