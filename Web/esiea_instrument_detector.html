@@ -423,25 +423,25 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
     <p class="page-sub">Fichiers nécessaires pour reproduire, entraîner ou étendre ce projet.</p>
   </div>
   <div class="res-grid">
-    <a href="#" class="res-card" onclick="fakeDownload('eval.py');return false;">
+    <a href="./eval.py" download class="res-card">
       <div class="res-top"><div class="res-icon">🧠</div><span class="res-badge">.PY</span></div>
       <h4>eval.py — Inférence</h4>
       <p>Découpe l'audio en fenêtres 3s, appelle le CNN une fois par fenêtre, calcule les ratios de présence et la timeline.</p>
       <div class="res-dl">↓ eval.py</div>
     </a>
-    <a href="#" class="res-card" onclick="fakeDownload('api.py');return false;">
+    <a href="./api.py" download class="res-card">
       <div class="res-top"><div class="res-icon">⚡</div><span class="res-badge">.PY</span></div>
       <h4>api.py — Relay FastAPI</h4>
-      <p>Reçoit le POST, loggue dans logs.txt, appelle eval.py, renvoie le JSON à la page.</p>
+      <p>Reçoit le POST, appelle eval.py en subprocess, renvoie le JSON à la page.</p>
       <div class="res-dl">↓ api.py</div>
     </a>
-    <a href="#" class="res-card" onclick="fakeDownload('train.py');return false;">
+    <a href="./train.py" download class="res-card">
       <div class="res-top"><div class="res-icon">🏋️</div><span class="res-badge">.PY</span></div>
       <h4>Script d'entraînement</h4>
       <p>Log-Mel, SpecAugment, CNN, boucle train/val, early stopping, génère les .pth dans ../Models/.</p>
       <div class="res-dl">↓ train.py</div>
     </a>
-    <a href="#" class="res-card" onclick="fakeDownload('evaluate_irmas.py');return false;">
+    <a href="./evaluate_irmas.py" download class="res-card">
       <div class="res-top"><div class="res-icon">📊</div><span class="res-badge">.PY</span></div>
       <h4>Évaluation IRMAS</h4>
       <p>Métrique officielle 0/1 sur le test set IRMAS. Utilise eval.py en interne.</p>
@@ -843,15 +843,6 @@ function buildTimeline(data){
   }
   axisWrap.appendChild(axis);
   inner.appendChild(axisWrap);
-}
-
-// ══════════════════════════════════════════════════════
-//  FAKE DOWNLOADS
-// ══════════════════════════════════════════════════════
-function fakeDownload(name){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([`# ${name}\n`],{type:'text/plain'}));
-  a.download=name; a.click();
 }
 
 refreshHero();
