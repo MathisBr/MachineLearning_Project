@@ -1,204 +1,271 @@
 """
-dataset.py — Datasets PyTorch pour l'entraînement, la validation et le test.
+dataset.py — Datasets PyTorch (train/val/test) + DataLoaders.
 
-Les spectrogrammes sont chargés depuis le cache (.pt) pré-calculé par preprocess.py.
-L'augmentation SpecAugment est appliquée uniquement pendant l'entraînement.
+Inclut :
+  - Split stratifié train/val
+  - Augmentation SpecAugment (FrequencyMasking + TimeMasking) — train only
+  - Mixup intégré dans le collate_fn
+  - Weighted RandomSampler pour compenser le déséquilibre des classes
+  - TestDataset pour fichiers de longueur variable avec annotations multi-label
 """
 
-import json
-import random
 import torch
-import torchaudio.transforms as T
+import torchaudio
+import numpy as np
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from sklearn.model_selection import train_test_split
 from pathlib import Path
 
 import config
 
 
-LABEL_ALIASES = {
-    # IRMAS peut fournir "gel" (guitare electrique) alors que le train utilise "gac".
-    "gel": "gac",
-}
+# ─── Augmentation SpecAugment ──────────────────────────────────────────────
+
+class SpecAugment:
+    """Applique FrequencyMasking + TimeMasking sur un spectrogramme."""
+
+    def __init__(self, freq_mask=config.FREQ_MASK_PARAM,
+                 time_mask=config.TIME_MASK_PARAM):
+        self.freq_mask = torchaudio.transforms.FrequencyMasking(freq_mask)
+        self.time_mask = torchaudio.transforms.TimeMasking(time_mask)
+
+    def __call__(self, spec):
+        spec = self.freq_mask(spec)
+        spec = self.time_mask(spec)
+        return spec
 
 
-def normalize_instrument_label(raw_label: str) -> str:
-    """Normalise un label d'annotation test vers l'espace des classes du modele."""
-    label = raw_label.strip().lower()
-    return LABEL_ALIASES.get(label, label)
+# ─── Train/Val Dataset ─────────────────────────────────────────────────────
 
-
-class SpecAugment(torch.nn.Module):
+class IRMASTrainDataset(Dataset):
     """
-    Augmentation SpecAugment (Park et al., 2019) via torchaudio.
-    Applique des masques aléatoires sur les axes fréquentiel et temporel.
-    Recommandé par le sujet pour améliorer la généralisation.
+    Dataset pour l'entraînement/validation.
+    Charge les spectrogrammes pré-calculés depuis le cache.
+    """
+
+    def __init__(self, file_paths, labels, augment=False):
+        """
+        Args:
+            file_paths: liste de chemins vers les fichiers .pt
+            labels: liste des indices de classe correspondants
+            augment: si True, applique SpecAugment
+        """
+        self.file_paths = file_paths
+        self.labels = labels
+        self.augment = augment
+        self.spec_augment = SpecAugment() if augment else None
+
+    def __len__(self):
+        return len(self.file_paths)
+
+    def __getitem__(self, idx):
+        spec = torch.load(self.file_paths[idx], weights_only=True)
+
+        if self.augment and self.spec_augment is not None:
+            spec = self.spec_augment(spec)
+
+        label = self.labels[idx]
+        return spec, label
+
+
+# ─── Test Dataset ──────────────────────────────────────────────────────────
+
+class IRMASTestDataset(Dataset):
+    """
+    Dataset pour le test.
+    Charge les spectrogrammes pré-calculés et les annotations multi-label.
+    batch_size=1 obligatoire car longueurs variables.
     """
 
     def __init__(self):
-        super().__init__()
-        self.freq_masking = T.FrequencyMasking(freq_mask_param=config.FREQ_MASK_PARAM)
-        self.time_masking = T.TimeMasking(time_mask_param=config.TIME_MASK_PARAM)
+        self.cache_dir = config.CACHE_DIR / "test"
+        self.test_dir = config.TEST_DIR
 
-    def forward(self, spectrogram: torch.Tensor) -> torch.Tensor:
-        spectrogram = self.freq_masking(spectrogram)
-        spectrogram = self.time_masking(spectrogram)
-        return spectrogram
+        # Lister les fichiers de test (un .pt = un .wav)
+        self.files = sorted(self.cache_dir.glob("*.pt"))
 
+    def __len__(self):
+        return len(self.files)
 
-class InstrumentTrainDataset(Dataset):
-    """
-    Dataset pour l'entraînement et la validation.
-    Charge les spectrogrammes depuis le cache et applique l'augmentation
-    SpecAugment si `augment=True`.
-    """
+    def __getitem__(self, idx):
+        pt_path = self.files[idx]
+        spec = torch.load(pt_path, weights_only=True)
 
-    def __init__(self, metadata: list[dict], augment: bool = False):
+        # Charger les annotations depuis le .txt correspondant
+        txt_path = self.test_dir / (pt_path.stem + ".txt")
+        annotations = self._load_annotations(txt_path)
+
+        return spec, annotations, pt_path.stem
+
+    @staticmethod
+    def _load_annotations(txt_path):
         """
-        Args:
-            metadata: Liste de dicts avec clés 'cache_path' et 'label_idx'.
-            augment:  Active SpecAugment (uniquement pour le sous-ensemble train).
+        Charge les annotations multi-label depuis un fichier .txt.
+        Format : une ligne par instrument (e.g. 'pia\\t\\n')
+        
+        Returns:
+            set des instruments présents parmi {gac, org, pia, voi}
         """
-        self.metadata = metadata
-        self.augment  = augment
-        self.spec_augment = SpecAugment() if augment else None
-
-    def __len__(self) -> int:
-        return len(self.metadata)
-
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
-        item      = self.metadata[index]
-        log_mel   = torch.load(item["cache_path"], weights_only=True)  # (1, N_MELS, T)
-        label_idx = item["label_idx"]
-
-        if self.augment and self.spec_augment is not None:
-            log_mel = self.spec_augment(log_mel)
-
-        return log_mel, label_idx
-
-
-class InstrumentTestDataset(Dataset):
-    """
-    Dataset pour l'évaluation sur l'ensemble de test.
-    Les fichiers ont des longueurs variables → pas de padding.
-    Le modèle utilise AdaptiveAvgPool2d pour absorber la variabilité.
-    """
-
-    def __init__(self, metadata: list[dict]):
-        """
-        Args:
-            metadata: Liste de dicts avec clés 'cache_path' et 'annotation_path'.
-        """
-        self.metadata = metadata
-
-    def __len__(self) -> int:
-        return len(self.metadata)
-
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, list[str]]:
-        item    = self.metadata[index]
-        log_mel = torch.load(item["cache_path"], weights_only=True)  # (1, N_MELS, T)
-
-        # Lecture des instruments présents dans le fichier d'annotation
-        instruments_present = []
-        annotation_path = item.get("annotation_path")
-        if annotation_path and Path(annotation_path).exists():
-            with open(annotation_path, "r") as f:
+        annotations = set()
+        if txt_path.exists():
+            with open(txt_path, "r") as f:
                 for line in f:
-                    instrument = normalize_instrument_label(line)
-                    if instrument:
-                        instruments_present.append(instrument)
+                    instr = line.strip().replace("\t", "")
+                    if instr in config.CLASS_TO_IDX:
+                        annotations.add(instr)
+        return annotations
 
-        return log_mel, instruments_present
 
+# ─── Collate function avec Mixup ──────────────────────────────────────────
 
-def build_train_val_loaders(
-    metadata_path: str,
-) -> tuple[DataLoader, DataLoader]:
+def mixup_collate_fn(batch, alpha=config.MIXUP_ALPHA):
     """
-    Construit les DataLoaders d'entraînement et de validation.
-    Réalise un split 75/25 aléatoire et reproductible.
+    Collate function avec Mixup pour le training.
+    Mélange les paires d'exemples avec un ratio lambda ~ Beta(alpha, alpha).
+    """
+    specs, labels = zip(*batch)
 
-    Args:
-        metadata_path: Chemin vers train_metadata.json.
+    # Pad les spectrogrammes à la même taille temporelle dans le batch
+    max_time = max(s.shape[-1] for s in specs)
+    padded_specs = []
+    for s in specs:
+        if s.shape[-1] < max_time:
+            pad_size = max_time - s.shape[-1]
+            s = torch.nn.functional.pad(s, (0, pad_size))
+        padded_specs.append(s)
 
+    specs_tensor = torch.stack(padded_specs)
+    labels_tensor = torch.tensor(labels, dtype=torch.long)
+
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+        lam = max(lam, 1 - lam)  # Assurer que lam >= 0.5
+
+        batch_size = specs_tensor.size(0)
+        index = torch.randperm(batch_size)
+
+        mixed_specs = lam * specs_tensor + (1 - lam) * specs_tensor[index]
+        labels_a = labels_tensor
+        labels_b = labels_tensor[index]
+
+        return mixed_specs, labels_a, labels_b, lam
+    else:
+        return specs_tensor, labels_tensor, labels_tensor, 1.0
+
+
+def standard_collate_fn(batch):
+    """Collate function standard (sans Mixup) pour la validation."""
+    specs, labels = zip(*batch)
+
+    max_time = max(s.shape[-1] for s in specs)
+    padded_specs = []
+    for s in specs:
+        if s.shape[-1] < max_time:
+            pad_size = max_time - s.shape[-1]
+            s = torch.nn.functional.pad(s, (0, pad_size))
+        padded_specs.append(s)
+
+    specs_tensor = torch.stack(padded_specs)
+    labels_tensor = torch.tensor(labels, dtype=torch.long)
+
+    return specs_tensor, labels_tensor
+
+
+# ─── Fonctions de création des DataLoaders ─────────────────────────────────
+
+def get_train_val_datasets():
+    """
+    Crée les datasets train et validation à partir du cache.
+    Split stratifié 85/15.
+    
+    Returns:
+        (train_dataset, val_dataset)
+    """
+    all_paths = []
+    all_labels = []
+
+    for class_name in config.CLASSES:
+        class_cache_dir = config.CACHE_DIR / "train" / class_name
+        pt_files = sorted(class_cache_dir.glob("*.pt"))
+
+        for pt_path in pt_files:
+            all_paths.append(pt_path)
+            all_labels.append(config.CLASS_TO_IDX[class_name])
+
+    # Split stratifié
+    train_paths, val_paths, train_labels, val_labels = train_test_split(
+        all_paths, all_labels,
+        test_size=config.VAL_SPLIT,
+        stratify=all_labels,
+        random_state=42,
+    )
+
+    train_dataset = IRMASTrainDataset(train_paths, train_labels, augment=True)
+    val_dataset = IRMASTrainDataset(val_paths, val_labels, augment=False)
+
+    print(f"[Dataset] Train: {len(train_dataset)} | Val: {len(val_dataset)}")
+
+    return train_dataset, val_dataset
+
+
+def get_train_val_loaders():
+    """
+    Crée les DataLoaders train et validation.
+    
     Returns:
         (train_loader, val_loader)
     """
-    with open(metadata_path, "r") as f:
-        metadata = json.load(f)
+    train_dataset, val_dataset = get_train_val_datasets()
 
-    if len(metadata) == 0:
-        raise ValueError(
-            "Aucun exemple d'entraînement trouvé dans les métadonnées. "
-            "Vérifiez les chemins TRAIN_DIR/NPY_DIR et relancez le pré-traitement."
-        )
-
-    # Mélange reproductible avant split
-    random.seed(config.RANDOM_SEED)
-    random.shuffle(metadata)
-
-    split_idx    = int(len(metadata) * (1 - config.VALIDATION_SPLIT))
-    train_meta   = metadata[:split_idx]
-    val_meta     = metadata[split_idx:]
-
-    train_counts = torch.tensor([637.0, 682.0, 721.0, 778.0])
-    sample_weights = []
-    for item in train_meta:
-        label = item["label_idx"]
-        sample_weights.append(1.0 / train_counts[label].item())
-
+    # WeightedRandomSampler pour compenser le déséquilibre
+    labels = train_dataset.labels
+    class_counts = np.bincount(labels, minlength=config.NUM_CLASSES)
+    class_weights = 1.0 / (class_counts + 1e-6)
+    sample_weights = [class_weights[label] for label in labels]
     sampler = WeightedRandomSampler(
         weights=sample_weights,
         num_samples=len(sample_weights),
         replacement=True,
     )
 
-    train_dataset = InstrumentTrainDataset(train_meta, augment=True)
-    val_dataset   = InstrumentTrainDataset(val_meta,   augment=False)
-
     train_loader = DataLoader(
         train_dataset,
         batch_size=config.BATCH_SIZE,
         sampler=sampler,
         num_workers=config.NUM_WORKERS,
-        pin_memory=(config.DEVICE.type == "cuda"),
+        pin_memory=True,
+        collate_fn=mixup_collate_fn,
+        persistent_workers=config.NUM_WORKERS > 0,
     )
+
     val_loader = DataLoader(
         val_dataset,
         batch_size=config.BATCH_SIZE,
         shuffle=False,
         num_workers=config.NUM_WORKERS,
-        pin_memory=(config.DEVICE.type == "cuda"),
+        pin_memory=True,
+        collate_fn=standard_collate_fn,
+        persistent_workers=config.NUM_WORKERS > 0,
     )
 
-    print(f"Train : {len(train_dataset)} exemples | Val : {len(val_dataset)} exemples")
     return train_loader, val_loader
 
 
-def build_test_loader(metadata_path: str) -> DataLoader:
+def get_test_loader():
     """
-    Construit le DataLoader de test.
-    batch_size=1 obligatoire car les spectrogrammes ont des tailles variables.
-
-    Args:
-        metadata_path: Chemin vers test_metadata.json.
-
+    Crée le DataLoader pour le test (batch_size=1, pas d'augmentation).
+    
     Returns:
-        test_loader avec batch_size=1.
+        test_loader
     """
-    with open(metadata_path, "r") as f:
-        metadata = json.load(f)
+    test_dataset = IRMASTestDataset()
+    print(f"[Dataset] Test: {len(test_dataset)}")
 
-    test_dataset = InstrumentTestDataset(metadata)
-
-    # batch_size=1 car les tenseurs de test ont des dimensions temporelles différentes
     test_loader = DataLoader(
         test_dataset,
         batch_size=1,
         shuffle=False,
-        num_workers=0,  # 0 workers pour éviter les problèmes de pickling
-        # Evite que le collate par defaut transforme list[str] en structure imbriquee.
-        collate_fn=lambda batch: batch[0],
+        num_workers=0,  # Pas de multiprocessing pour le test
     )
 
-    print(f"Test  : {len(test_dataset)} exemples")
     return test_loader

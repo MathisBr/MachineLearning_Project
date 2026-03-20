@@ -1,4 +1,5 @@
 # Datasets
+cache/
 Dataset/
 Dataset_npy/
 *.csv

@@ -1,273 +1,214 @@
 """
-train.py — Entraînement du modèle avec validation et sélection du meilleur modèle.
+train.py — Boucle d'entraînement optimisée.
 
-Stratégies appliquées pour combattre le sur-apprentissage (section 3.3 du sujet) :
-  - BatchNorm dans chaque bloc convolutionnel
-  - Dropout (0.4) dans la partie dense
-  - SpecAugment sur les données d'entraînement
-  - Early stopping si la val_loss stagne (patience = 10 epochs)
-  - ReduceLROnPlateau pour adapter le taux d'apprentissage
-
-Optimiseur : Adam — robuste, adaptatif, standard pour l'audio classification.
-
-Usage:
-    python train.py
+Inclut :
+  - AdamW optimizer avec weight decay
+  - CosineAnnealingWarmRestarts scheduler
+  - Label Smoothing sur CrossEntropyLoss
+  - Mixup training intégré
+  - Mixed Precision (AMP) sur CUDA
+  - Early stopping sur val_loss
+  - Sauvegarde du meilleur modèle
 """
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+from torch.amp import autocast, GradScaler
 from pathlib import Path
-import inspect
-
-try:
-    from tqdm.auto import tqdm
-except ImportError:
-    tqdm = None
+from tqdm import tqdm
+import time
 
 import config
-from dataset import build_train_val_loaders
-from model import build_model
+from model import InstrumentCNN
+from dataset import get_train_val_loaders
 
 
-def train_one_epoch(
-    model: nn.Module,
-    loader: DataLoader,
-    optimizer: torch.optim.Optimizer,
-    criterion: nn.Module,
-    epoch_idx: int | None = None,
-    total_epochs: int | None = None,
-) -> tuple[float, float]:
-    """
-    Effectue une epoch d'entraînement.
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    """Loss pour Mixup : combinaison pondérée des deux labels."""
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
-    Returns:
-        (train_loss, train_accuracy)
-    """
+
+def train_one_epoch(model, train_loader, criterion, optimizer, scaler, device, use_amp):
+    """Entraîne le modèle pendant une epoch."""
     model.train()
+    running_loss = 0.0
+    correct = 0
+    total = 0
 
-    total_loss     = 0.0
-    correct_preds  = 0
-    total_samples  = 0
+    for batch in tqdm(train_loader, desc="  Train", leave=False):
+        specs, labels_a, labels_b, lam = batch
+        specs = specs.to(device, non_blocking=True)
+        labels_a = labels_a.to(device, non_blocking=True)
+        labels_b = labels_b.to(device, non_blocking=True)
 
-    batch_iterator = loader
-    if tqdm is not None:
-        batch_desc = f"Epoch {epoch_idx}/{total_epochs}" if epoch_idx is not None and total_epochs is not None else "Train"
-        batch_iterator = tqdm(
-            loader,
-            total=len(loader),
-            desc=batch_desc,
-            unit="batch",
-            leave=False,
-            dynamic_ncols=True,
-        )
+        optimizer.zero_grad(set_to_none=True)
 
-    for spectrograms, labels in batch_iterator:
-        spectrograms = spectrograms.to(config.DEVICE)
-        labels       = labels.to(config.DEVICE)
+        with autocast(device_type=device.type, enabled=use_amp):
+            outputs = model(specs)
+            loss = mixup_criterion(criterion, outputs, labels_a, labels_b, lam)
 
-        optimizer.zero_grad()
+        if use_amp:
+            scaler.scale(loss).backward()
+            # Gradient clipping pour la stabilité
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
+            optimizer.step()
 
-        logits = model(spectrograms)
-        loss   = criterion(logits, labels)
-        loss.backward()
-        optimizer.step()
+        running_loss += loss.item() * specs.size(0)
 
-        total_loss    += loss.item() * spectrograms.size(0)
-        predictions    = logits.argmax(dim=1)
-        correct_preds += (predictions == labels).sum().item()
-        total_samples += spectrograms.size(0)
+        # Accuracy (basée sur labels_a, le label principal du mixup)
+        _, predicted = outputs.max(1)
+        total += labels_a.size(0)
+        correct += predicted.eq(labels_a).sum().item()
 
-        if tqdm is not None:
-            running_loss = total_loss / total_samples
-            running_acc = correct_preds / total_samples
-            batch_iterator.set_postfix(loss=f"{running_loss:.4f}", acc=f"{running_acc:.2%}")
-
-    avg_loss = total_loss / total_samples
-    accuracy = correct_preds / total_samples
-    return avg_loss, accuracy
+    epoch_loss = running_loss / total
+    epoch_acc = 100.0 * correct / total
+    return epoch_loss, epoch_acc
 
 
 @torch.no_grad()
-def evaluate(
-    model: nn.Module,
-    loader: DataLoader,
-    criterion: nn.Module,
-) -> tuple[float, float]:
-    """
-    Évalue le modèle sur un ensemble (validation ou test).
-    Désactive le calcul de gradient pour accélérer l'évaluation (section 3.4).
-
-    Returns:
-        (val_loss, val_accuracy)
-    """
+def validate(model, val_loader, criterion, device, use_amp):
+    """Évalue le modèle sur le set de validation."""
     model.eval()
+    running_loss = 0.0
+    correct = 0
+    total = 0
 
-    total_loss    = 0.0
-    correct_preds = 0
-    total_samples = 0
+    for specs, labels in tqdm(val_loader, desc="  Val  ", leave=False):
+        specs = specs.to(device, non_blocking=True)
+        labels = labels.to(device, non_blocking=True)
 
-    for spectrograms, labels in loader:
-        spectrograms = spectrograms.to(config.DEVICE)
-        labels       = labels.to(config.DEVICE)
+        with autocast(device_type=device.type, enabled=use_amp):
+            outputs = model(specs)
+            loss = criterion(outputs, labels)
 
-        logits       = model(spectrograms)
-        loss         = criterion(logits, labels)
+        running_loss += loss.item() * specs.size(0)
+        _, predicted = outputs.max(1)
+        total += labels.size(0)
+        correct += predicted.eq(labels).sum().item()
 
-        total_loss    += loss.item() * spectrograms.size(0)
-        predictions    = logits.argmax(dim=1)
-        correct_preds += (predictions == labels).sum().item()
-        total_samples += spectrograms.size(0)
-
-    avg_loss = total_loss / total_samples
-    accuracy = correct_preds / total_samples
-    return avg_loss, accuracy
-
-
-class EarlyStopping:
-    """Arrête l'entraînement si la val_loss ne s'améliore plus après `patience` epochs."""
-
-    def __init__(self, patience: int, model_save_path: str):
-        self.patience        = patience
-        self.model_save_path = model_save_path
-        self.best_val_loss   = float("inf")
-        self.epochs_no_improve = 0
-        self.should_stop     = False
-
-    def step(self, val_loss: float, model: nn.Module) -> bool:
-        """
-        Met à jour l'état de l'early stopping.
-
-        Returns:
-            True si le modèle s'est amélioré (meilleur checkpoint sauvegardé).
-        """
-        if val_loss < self.best_val_loss:
-            self.best_val_loss     = val_loss
-            self.epochs_no_improve = 0
-            torch.save(model.state_dict(), self.model_save_path)
-            return True
-
-        self.epochs_no_improve += 1
-        if self.epochs_no_improve >= self.patience:
-            self.should_stop = True
-        return False
+    epoch_loss = running_loss / total
+    epoch_acc = 100.0 * correct / total
+    return epoch_loss, epoch_acc
 
 
-def train(metadata_path: str = None) -> None:
+def train_model():
     """
-    Pipeline d'entraînement complet.
-
-    Args:
-        metadata_path: Chemin vers train_metadata.json (optionnel, utilise config par défaut).
+    Boucle d'entraînement complète.
+    
+    Returns:
+        model: le meilleur modèle entraîné
     """
-    if metadata_path is None:
-        metadata_path = str(Path(config.CACHE_DIR) / "train_metadata.json")
+    device = config.DEVICE
+    use_amp = config.USE_AMP
 
-    print("=" * 55)
-    print("    ENTRAÎNEMENT — Reconnaissance d'instruments")
-    print("=" * 55)
-    print(f"Device      : {config.DEVICE}")
-    print(f"Batch size  : {config.BATCH_SIZE}")
-    print(f"Epochs max  : {config.NUM_EPOCHS}")
-    print(f"LR initiale : {config.LEARNING_RATE}")
-    print(f"Dropout     : {config.DROPOUT_RATE}")
-    print(f"Patience    : {config.PATIENCE}")
-    print()
+    # Créer le dossier pour sauvegarder les modèles
+    config.MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    best_model_path = config.MODEL_DIR / "best_model.pt"
 
-    # ── Données ──────────────────────────────────────────────────────────────
-    train_loader, val_loader = build_train_val_loaders(metadata_path)
+    # Modèle
+    model = InstrumentCNN(num_classes=config.NUM_CLASSES).to(device)
+    param_count = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"\n[Train] Modèle: {param_count:,} paramètres")
+    print(f"[Train] Device: {device} | AMP: {use_amp}")
 
-    # ── Modèle, optimiseur, critère ──────────────────────────────────────────
-    model     = build_model()
-    optimizer = torch.optim.Adam(
+    # DataLoaders
+    train_loader, val_loader = get_train_val_loaders()
+
+    # Loss avec Label Smoothing
+    criterion = nn.CrossEntropyLoss(label_smoothing=config.LABEL_SMOOTHING)
+
+    # Optimiseur AdamW
+    optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=config.LEARNING_RATE,
         weight_decay=config.WEIGHT_DECAY,
     )
-    # Poids inverses des frequences de classe (rare -> poids plus fort).
-    train_counts = torch.tensor([637.0, 682.0, 721.0, 778.0])
-    class_weights = (1.0 / train_counts)
-    class_weights = class_weights / class_weights.sum() * config.NUM_CLASSES
-    class_weights = class_weights.to(config.DEVICE)
 
-    criterion = nn.CrossEntropyLoss(weight=class_weights)
-
-    # Compatibilité PyTorch: certaines versions n'acceptent pas `verbose`.
-    scheduler_kwargs = {
-        "mode": "min",
-        "patience": config.LR_PATIENCE,
-        "factor": config.LR_FACTOR,
-    }
-    if "verbose" in inspect.signature(torch.optim.lr_scheduler.ReduceLROnPlateau).parameters:
-        scheduler_kwargs["verbose"] = True
-
-    # ReduceLROnPlateau : réduit le LR si la val_loss stagne
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    # Scheduler CosineAnnealingWarmRestarts
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
         optimizer,
-        **scheduler_kwargs,
+        T_0=config.COSINE_T0,
+        T_mult=config.COSINE_T_MULT,
     )
 
-    early_stopping = EarlyStopping(
-        patience=config.PATIENCE,
-        model_save_path=config.MODEL_PATH,
-    )
+    # Mixed Precision scaler
+    scaler = GradScaler(enabled=use_amp)
 
-    # ── Boucle d'entraînement ─────────────────────────────────────────────────
-    print(f"{'Epoch':>6} | {'Train Loss':>10} | {'Train Acc':>9} | {'Val Loss':>8} | {'Val Acc':>8} | {'Best':>5}")
-    print("-" * 63)
+    # Early stopping
+    best_val_loss = float("inf")
+    best_val_acc = 0.0
+    patience_counter = 0
 
-    epoch_iterator = range(1, config.NUM_EPOCHS + 1)
-    if tqdm is not None:
-        epoch_iterator = tqdm(
-            epoch_iterator,
-            total=config.NUM_EPOCHS,
-            desc="Epochs",
-            unit="epoch",
-            dynamic_ncols=True,
-            leave=False,
-        )
+    print(f"\n[Train] Début de l'entraînement ({config.NUM_EPOCHS} epochs max)")
+    print("-" * 70)
+    start_time = time.time()
 
-    for epoch in epoch_iterator:
+    for epoch in range(1, config.NUM_EPOCHS + 1):
+        epoch_start = time.time()
+        current_lr = optimizer.param_groups[0]["lr"]
+
+        # Train
         train_loss, train_acc = train_one_epoch(
-            model,
-            train_loader,
-            optimizer,
-            criterion,
-            epoch_idx=epoch,
-            total_epochs=config.NUM_EPOCHS,
+            model, train_loader, criterion, optimizer, scaler, device, use_amp
         )
-        val_loss,   val_acc   = evaluate(model, val_loader, criterion)
 
-        scheduler.step(val_loss)
-        is_best = early_stopping.step(val_loss, model)
-
-        best_marker = "✓" if is_best else " "
-        if tqdm is not None:
-            epoch_iterator.set_postfix(
-                train_loss=f"{train_loss:.4f}",
-                val_loss=f"{val_loss:.4f}",
-                val_acc=f"{val_acc:.2%}",
-            )
-        row = (
-            f"{epoch:>6} | {train_loss:>10.4f} | {train_acc:>8.2%} "
-            f"| {val_loss:>8.4f} | {val_acc:>8.2%} | {best_marker:>5}"
+        # Validation
+        val_loss, val_acc = validate(
+            model, val_loader, criterion, device, use_amp
         )
-        if tqdm is not None:
-            tqdm.write(row)
+
+        # Scheduler step
+        scheduler.step()
+
+        epoch_time = time.time() - epoch_start
+
+        # Logging
+        print(
+            f"Epoch {epoch:3d}/{config.NUM_EPOCHS} | "
+            f"Train Loss: {train_loss:.4f} Acc: {train_acc:.1f}% | "
+            f"Val Loss: {val_loss:.4f} Acc: {val_acc:.1f}% | "
+            f"LR: {current_lr:.2e} | "
+            f"Time: {epoch_time:.1f}s"
+        )
+
+        # Sauvegarde du meilleur modèle (basé sur val_loss)
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_val_acc = val_acc
+            patience_counter = 0
+
+            torch.save({
+                "epoch": epoch,
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "val_loss": best_val_loss,
+                "val_acc": best_val_acc,
+            }, best_model_path)
+            print(f"  → Meilleur modèle sauvegardé (val_loss: {best_val_loss:.4f}, val_acc: {best_val_acc:.1f}%)")
         else:
-            print(row)
+            patience_counter += 1
+            if patience_counter >= config.EARLY_STOP_PATIENCE:
+                print(f"\n[Train] Early stopping après {epoch} epochs (patience={config.EARLY_STOP_PATIENCE})")
+                break
 
-        if early_stopping.should_stop:
-            if tqdm is not None:
-                epoch_iterator.close()
-                tqdm.write(f"\n⚡ Early stopping à l'epoch {epoch}.")
-            else:
-                print(f"\n⚡ Early stopping à l'epoch {epoch}.")
-            break
+    total_time = time.time() - start_time
+    print("-" * 70)
+    print(f"[Train] Terminé en {total_time:.1f}s")
+    print(f"[Train] Meilleur modèle : val_loss={best_val_loss:.4f}, val_acc={best_val_acc:.1f}%")
 
-    print(f"\n✓ Meilleur modèle sauvegardé : {config.MODEL_PATH}")
-    print(f"  Meilleure val_loss : {early_stopping.best_val_loss:.4f}")
+    # Charger le meilleur modèle
+    checkpoint = torch.load(best_model_path, map_location=device, weights_only=True)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    print(f"[Train] Modèle chargé depuis epoch {checkpoint['epoch']}")
+
+    return model
 
 
 if __name__ == "__main__":
-    train()
+    train_model()

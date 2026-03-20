@@ -1,58 +1,104 @@
 """
-config.py — Hyperparamètres centralisés du projet.
-Modifier ce fichier pour ajuster les paramètres d'entraînement.
+config.py — Hyperparamètres centralisés pour le pipeline IRMAS.
+
+Détection automatique du device :
+  1. CUDA (NVIDIA RTX)
+  2. DirectML (AMD 7900 XT sur Windows)
+  3. CPU (fallback)
 """
 
+import os
 import torch
 from pathlib import Path
 
-# ── Chemins ─────────────────────────────────────────────────────────────────
+# ─── Chemins ────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TRAIN_DIR    = PROJECT_ROOT / "Dataset"      # Sous-dossiers : gac/, org/, pia/, voi/
-TEST_DIR     = PROJECT_ROOT / "Dataset" / "Test"  # Fichiers .wav + fichiers d'annotations
-NPY_DIR      = PROJECT_ROOT / "Dataset_npy"  # Version pré-convertie en .npy (optionnelle)
-CACHE_DIR    = PROJECT_ROOT / "data" / "cache"    # Spectrogrammes pré-calculés (.pt)
-MODEL_PATH   = PROJECT_ROOT / "best_model.pt"      # Meilleur modèle sauvegardé
+DATA_DIR = PROJECT_ROOT / "Dataset"
 
-# ── Classes ──────────────────────────────────────────────────────────────────
-INSTRUMENT_CLASSES = ["gac", "org", "pia", "voi"]
-NUM_CLASSES        = len(INSTRUMENT_CLASSES)
-CLASS_TO_IDX       = {cls: i for i, cls in enumerate(INSTRUMENT_CLASSES)}
-IDX_TO_CLASS       = {i: cls for i, cls in enumerate(INSTRUMENT_CLASSES)}
+TRAIN_DIRS = {
+    "gac": DATA_DIR / "Train_gac" / "gac",
+    "org": DATA_DIR / "Train_org" / "org",
+    "pia": DATA_DIR / "Train_pia" / "pia",
+    "voi": DATA_DIR / "Train_voi" / "voi",
+}
 
-# ── Audio ────────────────────────────────────────────────────────────────────
-SAMPLE_RATE   = 22050   # Hz — taux standard pour la musique
-TRAIN_SAMPLES = 66150   # 3 secondes × 22050 Hz (durée fixe pour le train)
+TEST_DIR = DATA_DIR / "Test"
+CACHE_DIR = PROJECT_ROOT / "cache"
+MODEL_DIR = PROJECT_ROOT / "models"
 
-# ── Mel Spectrogram ───────────────────────────────────────────────────────────
-# Choix justifié : Log-Mel spectrogramme = meilleur rapport performance/complexité
-# selon la littérature IRMAS (Chen et al. 2024, Castel-Branco et al. 2020).
-N_FFT       = 1024   # Fenêtre FFT — bonne résolution fréquentielle pour la musique
-HOP_LENGTH  = 512    # Décalage = 50% overlap — standard pour l'audio musical
-N_MELS      = 64     # Bandes Mel — compromis taille/expressivité pour 4 classes
-F_MIN       = 20.0   # Fréquence min : limite basse de l'audition humaine (20 Hz)
-F_MAX = 11025.0  # = Nyquist pour 22050 Hz
-# ── SpecAugment (data augmentation) ──────────────────────────────────────────
-# Recommandé par le sujet pour combattre le sur-apprentissage.
-FREQ_MASK_PARAM = 8   # Masque max sur l'axe fréquentiel (sur 64 bandes)
-TIME_MASK_PARAM = 30  # Masque max sur l'axe temporel
+# ─── Classes ────────────────────────────────────────────────────────────────
+CLASSES = ["gac", "org", "pia", "voi"]
+NUM_CLASSES = len(CLASSES)
+CLASS_TO_IDX = {c: i for i, c in enumerate(CLASSES)}
+IDX_TO_CLASS = {i: c for i, c in enumerate(CLASSES)}
 
-# ── Entraînement ─────────────────────────────────────────────────────────────
-VALIDATION_SPLIT = 0.25   # 75% train / 25% validation (recommandé par le sujet)
-BATCH_SIZE       = 32     # Optimal d'après Stanford CS230 sur IRMAS
-LEARNING_RATE    = 0.001 # Adam — taux initial standard
-WEIGHT_DECAY     = 0.0001   # Régularisation L2 légère
-NUM_EPOCHS       = 50
-PATIENCE         = 10     # Early stopping : arrêt si pas d'amélioration après N epochs
-LR_PATIENCE      = 5      # ReduceLROnPlateau : réduction du LR après N epochs stagnants
-LR_FACTOR        = 0.5    # Facteur de réduction du LR
+# ─── Audio ──────────────────────────────────────────────────────────────────
+SAMPLE_RATE = 22050
+N_FFT = 2048
+HOP_LENGTH = 512
+N_MELS = 128
+F_MIN = 20
+F_MAX = 8000
 
-# ── Modèle ────────────────────────────────────────────────────────────────────
-DROPOUT_RATE     = 0.4    # Optimal selon la littérature (0.25–0.5)
-ADAPTIVE_POOL_H  = 4      # Taille de sortie de l'AdaptiveAvgPool2d
-ADAPTIVE_POOL_W  = 4      # → tenseur (C, 4, 4) avant flatten
+# ─── Training ──────────────────────────────────────────────────────────────
+BATCH_SIZE = 32
+NUM_EPOCHS = 100
+LEARNING_RATE = 3e-4
+WEIGHT_DECAY = 1e-4
+VAL_SPLIT = 0.15          # 15% pour la validation
+EARLY_STOP_PATIENCE = 15
+LABEL_SMOOTHING = 0.1
+NUM_WORKERS = min(4, os.cpu_count() or 1)
 
-# ── Système ──────────────────────────────────────────────────────────────────
-DEVICE      = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-NUM_WORKERS = 0    # 0 est recommandé sur Windows pour les petits fichiers (.pt)
-RANDOM_SEED = 42
+# ─── Augmentation ──────────────────────────────────────────────────────────
+FREQ_MASK_PARAM = 20      # SpecAugment : masquage fréquentiel
+TIME_MASK_PARAM = 30      # SpecAugment : masquage temporel
+MIXUP_ALPHA = 0.3         # Mixup : paramètre beta distribution
+
+# ─── Scheduler ─────────────────────────────────────────────────────────────
+COSINE_T0 = 10            # CosineAnnealingWarmRestarts : période initiale
+COSINE_T_MULT = 2         # Multiplicateur de période
+
+# ─── Device ────────────────────────────────────────────────────────────────
+def get_device():
+    """Détecte le meilleur device disponible : CUDA → DirectML → CPU."""
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        print(f"[Device] CUDA détecté : {torch.cuda.get_device_name(0)}")
+        return device
+
+    # Essayer DirectML (AMD / Intel GPU sur Windows)
+    try:
+        import torch_directml
+        device = torch_directml.device()
+        print(f"[Device] DirectML détecté (AMD/Intel GPU)")
+        return device
+    except ImportError:
+        pass
+
+    print("[Device] CPU uniquement")
+    return torch.device("cpu")
+
+
+DEVICE = get_device()
+USE_AMP = DEVICE.type == "cuda"  # Mixed Precision uniquement sur CUDA
+
+
+def print_config():
+    """Affiche la configuration courante."""
+    print("=" * 60)
+    print("  Configuration IRMAS Pipeline")
+    print("=" * 60)
+    print(f"  Device        : {DEVICE}")
+    print(f"  Mixed Prec.   : {USE_AMP}")
+    print(f"  Batch size    : {BATCH_SIZE}")
+    print(f"  Learning rate : {LEARNING_RATE}")
+    print(f"  Epochs (max)  : {NUM_EPOCHS}")
+    print(f"  N_MELS        : {N_MELS}")
+    print(f"  N_FFT         : {N_FFT}")
+    print(f"  Hop length    : {HOP_LENGTH}")
+    print(f"  Val split     : {VAL_SPLIT}")
+    print(f"  Mixup alpha   : {MIXUP_ALPHA}")
+    print(f"  Label smooth. : {LABEL_SMOOTHING}")
+    print(f"  Num workers   : {NUM_WORKERS}")
+    print("=" * 60)
