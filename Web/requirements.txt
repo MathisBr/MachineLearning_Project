@@ -8,3 +8,9 @@ torch>=2.2.0
 torchaudio>=2.2.0
 numpy>=1.26.0
 soundfile>=0.12.1
+
+# ── Visualisation (train.py) ───────────────────────────────────
+matplotlib>=3.8.0
+
+# ── Progression console (train.py) ────────────────────────────
+tqdm>=4.66.0

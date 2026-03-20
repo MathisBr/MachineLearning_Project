@@ -90,6 +90,7 @@ class ConvBlock(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),
         )
+    
     def forward(self, x):
         return self.block(x)
 
@@ -97,7 +98,7 @@ class ConvBlock(nn.Module):
 class InstrumentCNN(nn.Module):
     def __init__(self, n_classes: int = 4):
         super().__init__()
-        # Noms alignes sur train.py
+        # Ancienne architecture stable
         self.conv_layers = nn.Sequential(
             ConvBlock(1, 32),
             ConvBlock(32, 64),
@@ -105,13 +106,14 @@ class InstrumentCNN(nn.Module):
         )
         self.pool = nn.AdaptiveAvgPool2d((4, 4))
         self.classifier = nn.Sequential(
-            nn.Flatten(),        # index 0
-            nn.Dropout(0.5),     # index 1
-            nn.Linear(128 * 4 * 4, 256),  # index 2
-            nn.ReLU(inplace=True),         # index 3
-            nn.Dropout(0.4),               # index 4
-            nn.Linear(256, n_classes),     # index 5
+            nn.Flatten(),
+            nn.Dropout(0.3),
+            nn.Linear(128 * 4 * 4, 256),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.3),
+            nn.Linear(256, n_classes),
         )
+    
     def forward(self, x):
         return self.classifier(self.pool(self.conv_layers(x)))
 
