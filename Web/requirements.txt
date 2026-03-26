@@ -1,0 +1,16 @@
+# API relay
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# Inference (eval.py)
+torch>=2.2.0
+torchaudio>=2.2.0
+numpy>=1.26.0
+soundfile>=0.12.1
+
+# ── Visualisation (train.py) ───────────────────────────────────
+matplotlib>=3.8.0
+
+# ── Progression console (train.py) ────────────────────────────
+tqdm>=4.66.0

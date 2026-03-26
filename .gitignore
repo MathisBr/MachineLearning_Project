@@ -1,4 +1,5 @@
 # Datasets
+cache/
 Dataset/
 Dataset_npy/
 *.csv
@@ -6,6 +7,10 @@ Dataset_npy/
 *.xls
 *.json
 *.zip
+
+Models/
+*.pt
+*.pth
 
 # Python
 __pycache__/
@@ -27,6 +32,9 @@ build/
 *.swo
 *~
 
+# Environnement virtuel
+.venv/
+
 # Jupyter Notebook
 .ipynb_checkpoints/
 *.ipynb
@@ -37,3 +45,4 @@ Thumbs.db
 
 # Logs
 *.log
+# *.pdf

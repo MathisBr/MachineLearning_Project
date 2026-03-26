@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoundID — ESIEA</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#28AAE1;--dark:#0B1F2E;--mid:#0D2D42;--deep:#081726;
+  --accent:#00D4FF;--gray:#6ba8c4;--red:#ff4757;--green:#2ecc71;
+  --amber:#f39c12;
+  --c-gac:#28AAE1;--c-org:#a78bfa;--c-pia:#34d399;--c-voi:#fb923c;
+  --r:14px;--rs:8px;--font:'Outfit',sans-serif;--mono:'Space Mono',monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--dark);color:#fff;display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:rgba(8,23,38,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(40,170,225,.15);z-index:10}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-esiea{display:flex;align-items:center;text-decoration:none;opacity:.9;transition:opacity .2s}
+.logo-esiea:hover{opacity:1}
+.logo-divider{width:1px;height:28px;background:rgba(40,170,225,.25)}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-name{font-size:17px;font-weight:700;letter-spacing:-.5px}
+.logo-sub{font-size:9px;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+nav{display:flex;gap:2px}
+nav button{background:none;border:none;cursor:pointer;color:var(--gray);font-family:var(--font);font-size:13.5px;font-weight:500;padding:6px 15px;border-radius:20px;transition:all .2s;position:relative}
+nav button:hover{color:#fff;background:rgba(40,170,225,.1)}
+nav button.active{color:var(--blue);background:rgba(40,170,225,.12)}
+.nav-badge{position:absolute;top:4px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--green);border:1.5px solid var(--dark);display:none}
+.nav-badge.show{display:block}
+
+/* ── MAIN ── */
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding:2rem 2rem 3rem}
+main::-webkit-scrollbar{width:5px}
+main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SHARED ── */
+.page-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem}
+.page-title{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;letter-spacing:-1px}
+.page-sub{color:var(--gray);font-size:.92rem;margin-top:.4rem;max-width:540px;line-height:1.6}
+.page-header{margin-bottom:2rem}
+.card{background:rgba(13,45,66,.55);border:1px solid rgba(40,170,225,.1);border-radius:var(--r);padding:1.75rem;transition:border-color .25s}
+.card:hover{border-color:rgba(40,170,225,.25)}
+.card-title{font-size:1rem;font-weight:600;margin-bottom:.4rem}
+.card-sub{font-size:.85rem;color:var(--gray);line-height:1.6;margin-bottom:1.2rem}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:50px;border:none;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:600;transition:all .25s}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 0 24px rgba(40,170,225,.25)}
+.btn-blue:hover{background:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(40,170,225,.45)}
+.btn-blue:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--blue);border:2px solid rgba(40,170,225,.35)}
+.btn-outline:hover{border-color:var(--blue);background:rgba(40,170,225,.1)}
+.btn-ghost{background:rgba(40,170,225,.1);color:var(--blue);border:1px solid rgba(40,170,225,.2)}
+.btn-ghost:hover{background:rgba(40,170,225,.2)}
+.btn-danger{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
+.btn-danger:hover{background:rgba(255,71,87,.2)}
+.btn-sm{padding:7px 16px;font-size:12px}
+
+/* ══ ACCUEIL ══ */
+.hero-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 130px);text-align:center;position:relative}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;pointer-events:none;background:radial-gradient(circle,rgba(40,170,225,.1) 0%,transparent 65%);animation:glow-pulse 5s ease-in-out infinite}
+@keyframes glow-pulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+.wave-bars{display:flex;align-items:center;gap:3px;height:50px;margin-bottom:2rem;justify-content:center}
+.wave-bars span{display:block;width:3px;border-radius:2px;background:var(--blue);opacity:.7;animation:wave-idle 1.4s ease-in-out infinite}
+.wave-bars span:nth-child(1){height:18px;animation-delay:0s}.wave-bars span:nth-child(2){height:32px;animation-delay:.1s}
+.wave-bars span:nth-child(3){height:46px;animation-delay:.2s}.wave-bars span:nth-child(4){height:38px;animation-delay:.3s}
+.wave-bars span:nth-child(5){height:50px;animation-delay:.4s}.wave-bars span:nth-child(6){height:28px;animation-delay:.5s}
+.wave-bars span:nth-child(7){height:42px;animation-delay:.6s}.wave-bars span:nth-child(8){height:22px;animation-delay:.7s}
+.wave-bars span:nth-child(9){height:46px;animation-delay:.8s}.wave-bars span:nth-child(10){height:34px;animation-delay:.9s}
+.wave-bars span:nth-child(11){height:18px;animation-delay:1s}
+@keyframes wave-idle{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+.hero-title{font-size:clamp(2.4rem,5.5vw,4rem);font-weight:700;line-height:1.05;letter-spacing:-2px;margin-bottom:1rem}
+.hero-title .blue{color:var(--blue)}.hero-title .thin{font-weight:300}
+.hero-desc{color:var(--gray);font-size:1rem;max-width:480px;line-height:1.7;margin-bottom:2rem}
+.hero-tags{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem}
+.tag{padding:5px 14px;border-radius:20px;border:1px solid rgba(40,170,225,.3);font-size:12px;color:var(--blue);font-family:var(--mono)}
+.hero-status{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;border-radius:50px;background:rgba(40,170,225,.07);border:1px solid rgba(40,170,225,.15);font-size:13px;color:var(--gray);margin-top:2rem}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.status-dot.loaded{background:var(--green);animation:glow-dot 2s ease-in-out infinite}
+@keyframes glow-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ══ ENREGISTREUR ══ */
+.rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.upload-zone{border:2px dashed rgba(40,170,225,.22);border-radius:var(--rs);padding:1.75rem;text-align:center;cursor:pointer;transition:all .3s;position:relative}
+.upload-zone:hover,.upload-zone.over{border-color:var(--blue);background:rgba(40,170,225,.05)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon{font-size:2rem;margin-bottom:.4rem}
+.upload-hint{font-size:12px;color:var(--gray)}
+.upload-fname{margin-top:.6rem;font-size:11px;font-family:var(--mono);color:var(--blue);word-break:break-all}
+.mic-btn{width:100%;padding:.9rem;border-radius:var(--rs);border:2px solid rgba(40,170,225,.22);background:transparent;color:#fff;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .3s}
+.mic-btn:hover{border-color:var(--blue);background:rgba(40,170,225,.1)}
+.mic-btn.rec{border-color:var(--red);background:rgba(255,71,87,.1);animation:pulse-rec 1.5s ease-in-out infinite}
+@keyframes pulse-rec{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.4)}50%{box-shadow:0 0 0 10px rgba(255,71,87,0)}}
+.rec-dot{width:9px;height:9px;border-radius:50%;background:var(--red);display:none}
+.mic-btn.rec .rec-dot{display:block;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.rec-timer{font-family:var(--mono);font-size:12px;color:var(--red);display:none}
+.mic-btn.rec .rec-timer{display:block}
+.review-panel{background:rgba(8,23,38,.6);border:1px solid rgba(40,170,225,.15);border-radius:var(--r);padding:1.25rem;margin-top:1.25rem;display:none}
+.review-panel.show{display:block;animation:fadeIn .3s ease}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:1rem;flex-wrap:wrap}
+.review-title{font-size:.9rem;font-weight:600}
+.review-meta{font-size:11px;color:var(--gray);font-family:var(--mono);margin-top:2px}
+.review-controls{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.waveform-canvas{width:100%;height:56px;background:rgba(13,45,66,.5);border-radius:var(--rs);display:block;margin-bottom:.75rem}
+.review-audio audio{width:100%;border-radius:6px;height:36px}
+.analyze-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:rgba(40,170,225,.06);border:1px solid rgba(40,170,225,.15);border-radius:var(--r);margin-top:1.25rem}
+.analyze-bar-left{font-size:.85rem;color:var(--gray)}
+.analyze-bar-left strong{color:#fff;font-weight:600}
+
+/* ══ ANALYSE ══ */
+.no-audio-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;gap:1rem;color:var(--gray);text-align:center}
+.no-audio-icon{font-size:3rem;opacity:.3}
+.no-audio-text{max-width:300px;font-size:.875rem;line-height:1.7}
+
+.api-bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;padding:.8rem 1.25rem;border-radius:var(--rs);background:rgba(40,170,225,.05);border:1px solid rgba(40,170,225,.15);margin-bottom:1.25rem}
+.api-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.api-dot.ok{background:var(--green);animation:glow-dot 2s ease-in-out infinite}
+.api-dot.err{background:var(--red)}
+.api-label{font-family:var(--mono);font-size:11px;color:var(--gray);flex:1;min-width:130px}
+.api-label strong{color:var(--blue)}
+.api-url{background:rgba(13,45,66,.8);border:1px solid rgba(40,170,225,.2);border-radius:5px;padding:5px 10px;color:#fff;font-family:var(--mono);font-size:11px;width:190px;outline:none;transition:border-color .2s}
+.api-url:focus{border-color:var(--blue)}
+
+/* Options row */
+.options-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.model-select-wrap{display:flex;align-items:center;gap:.6rem}
+.model-label{font-family:var(--mono);font-size:11px;color:var(--gray);white-space:nowrap}
+.model-select{appearance:none;-webkit-appearance:none;background:rgba(13,45,66,.9);border:1px solid rgba(40,170,225,.25);border-radius:var(--rs);padding:8px 32px 8px 12px;color:#fff;font-family:var(--mono);font-size:12px;cursor:pointer;outline:none;transition:all .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%2328AAE1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.model-select:hover,.model-select:focus{border-color:var(--blue)}
+.model-select option{background:#0D2D42;color:#fff}
+.switch-wrap{display:flex;align-items:center;gap:.7rem;padding:7px 14px;background:rgba(13,45,66,.7);border:1px solid rgba(40,170,225,.18);border-radius:50px;cursor:pointer;transition:all .25s;user-select:none}
+.switch-wrap:hover{border-color:rgba(40,170,225,.4)}
+.switch-wrap.on{border-color:rgba(40,170,225,.5);background:rgba(40,170,225,.1)}
+.switch-track{width:34px;height:18px;background:rgba(40,170,225,.15);border-radius:9px;position:relative;transition:background .25s;flex-shrink:0;border:1px solid rgba(40,170,225,.25)}
+.switch-wrap.on .switch-track{background:var(--blue);border-color:var(--blue)}
+.switch-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .25s;opacity:.7}
+.switch-wrap.on .switch-thumb{transform:translateX(16px);opacity:1}
+.switch-label-text{font-family:var(--mono);font-size:11px;color:var(--gray);transition:color .2s}
+.switch-wrap.on .switch-label-text{color:var(--blue)}
+.switch-badge{font-size:9px;padding:2px 7px;border-radius:20px;background:rgba(40,170,225,.1);border:1px solid rgba(40,170,225,.2);color:var(--gray);font-family:var(--mono);transition:all .2s}
+.switch-wrap.on .switch-badge{background:rgba(40,170,225,.2);color:var(--blue);border-color:var(--blue)}
+
+/* loading */
+.loading-state{display:none;flex-direction:column;align-items:center;padding:4rem 0;gap:1.5rem}
+.loading-state.show{display:flex}
+.rings{position:relative;width:90px;height:90px}
+.rings span{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:var(--blue);animation:spin 1.2s linear infinite}
+.rings span:nth-child(2){inset:11px;border-top-color:rgba(40,170,225,.5);animation-duration:1.8s;animation-direction:reverse}
+.rings span:nth-child(3){inset:22px;border-top-color:rgba(40,170,225,.22);animation-duration:2.4s}
+.rings .dot{position:absolute;inset:35px;background:var(--blue);border-radius:50%;animation:pulse-ldr 1.2s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse-ldr{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.3);opacity:1}}
+.loading-lbl{font-family:var(--mono);font-size:12px;color:var(--gray)}
+.loading-sub{font-family:var(--mono);font-size:11px;color:rgba(40,170,225,.55)}
+
+/* error */
+.error-state{display:none;padding:1.25rem 1.5rem;background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.28);border-radius:var(--r);margin-top:1rem}
+.error-state.show{display:block}
+.error-state h4{color:var(--red);margin-bottom:.4rem;font-size:.9rem}
+.error-state pre{font-size:11px;color:var(--gray);font-family:var(--mono);white-space:pre-wrap;word-break:break-word;line-height:1.6}
+
+/* result */
+.result-state{display:none;animation:fadeIn .4s ease}
+.result-state.show{display:block}
+
+/* meta pills */
+.meta-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.meta-pill{font-family:var(--mono);font-size:10px;padding:3px 10px;background:rgba(13,45,66,.8);border:1px solid rgba(40,170,225,.15);border-radius:20px;color:var(--gray)}
+.meta-pill strong{color:var(--blue)}
+
+/* ── BARS ── */
+.summary-title{font-size:.8rem;font-family:var(--mono);color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem}
+.bars{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.5rem}
+.bar-row{display:grid;grid-template-columns:180px 1fr 60px;align-items:center;gap:.9rem;padding:1rem 1.25rem;background:rgba(13,45,66,.4);border-radius:var(--rs);border:1px solid rgba(40,170,225,.08);transition:border-color .25s}
+.bar-row:hover{border-color:rgba(40,170,225,.22)}
+.bar-row.dominant{background:rgba(40,170,225,.08);border-color:rgba(40,170,225,.28)}
+.bar-lbl{display:flex;align-items:center;gap:8px}
+.bar-color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.bar-emoji{font-size:1.3rem}
+.bar-name{font-weight:600;font-size:.9rem;display:block}
+.bar-detail{font-family:var(--mono);font-size:9px;color:var(--gray);display:block}
+.bar-track{height:9px;background:rgba(255,255,255,.05);border-radius:9px;overflow:hidden}
+.bar-fill{height:100%;border-radius:9px;width:0;transition:width 1.1s cubic-bezier(.34,1.56,.64,1)}
+.bar-pct{font-family:var(--mono);font-size:15px;font-weight:700;text-align:right}
+
+/* ── TIMELINE ── */
+.timeline-toggle{display:flex;align-items:center;gap:.75rem;padding:.9rem 1.25rem;background:rgba(13,45,66,.4);border:1px solid rgba(40,170,225,.1);border-radius:var(--r);cursor:pointer;transition:all .25s;user-select:none;margin-bottom:0}
+.timeline-toggle:hover{border-color:rgba(40,170,225,.3);background:rgba(13,45,66,.6)}
+.timeline-toggle-icon{font-size:1.1rem}
+.timeline-toggle-label{flex:1;font-size:.9rem;font-weight:600}
+.timeline-toggle-sub{font-size:11px;color:var(--gray);font-family:var(--mono)}
+.timeline-chevron{font-size:.7rem;color:var(--gray);transition:transform .3s}
+.timeline-toggle.open .timeline-chevron{transform:rotate(180deg)}
+
+.timeline-wrap{overflow:hidden;max-height:0;transition:max-height .5s cubic-bezier(.4,0,.2,1);margin-bottom:1.5rem}
+.timeline-wrap.open{max-height:1000px}
+.timeline-inner{padding-top:1rem}
+
+/* Legend */
+.tl-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.tl-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);font-family:var(--mono)}
+.tl-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* Track rows */
+.tl-tracks{display:flex;flex-direction:column;gap:6px}
+.tl-row{display:flex;align-items:center;gap:.75rem}
+.tl-row-label{width:110px;flex-shrink:0;font-size:11px;color:var(--gray);font-family:var(--mono);text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:5px}
+.tl-row-label .dot{width:8px;height:8px;border-radius:50%}
+.tl-track{flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:5px;position:relative;overflow:visible}
+.tl-seg{position:absolute;top:3px;bottom:3px;border-radius:3px;transition:opacity .2s;cursor:pointer}
+.tl-seg:hover{opacity:.8 !important;outline:2px solid rgba(255,255,255,.3)}
+/* Global floating tooltip — positionné via JS, jamais clipé */
+#tl-tooltip{
+  position:fixed;
+  background:rgba(8,23,38,.97);
+  border:1px solid rgba(40,170,225,.35);
+  border-radius:10px;
+  padding:10px 13px;
+  font-size:10px;font-family:var(--mono);
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s;
+  z-index:9999;
+  box-shadow:0 6px 24px rgba(0,0,0,.6);
+  min-width:140px;
+}
+#tl-tooltip.show{opacity:1}
+#tl-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:rgba(40,170,225,.35);
+}
+.tl-tt-time{color:var(--gray);margin-bottom:6px;font-size:9px;letter-spacing:.5px;border-bottom:1px solid rgba(40,170,225,.15);padding-bottom:5px}
+.tl-tt-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:3px}
+.tl-tt-row:last-child{margin-bottom:0}
+.tl-tt-label{display:flex;align-items:center;gap:4px;color:rgba(255,255,255,.7)}
+.tl-tt-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.tl-tt-bar{height:100%;border-radius:2px}
+.tl-tt-pct{color:var(--blue);min-width:32px;text-align:right}
+.tl-tt-winner .tl-tt-label{color:#fff;font-weight:700}
+.tl-tt-winner .tl-tt-pct{color:var(--accent)}
+
+/* Time axis */
+.tl-axis{display:flex;align-items:flex-start;padding-left:118px;margin-top:4px}
+.tl-axis-inner{flex:1;position:relative;height:16px}
+.tl-tick{position:absolute;font-size:9px;font-family:var(--mono);color:var(--gray);transform:translateX(-50%)}
+.tl-tick::before{content:'';display:block;width:1px;height:4px;background:rgba(40,170,225,.3);margin:0 auto 2px}
+
+
+/* ── Presence chart ── */
+.presence-chart-wrap{margin-top:1.5rem;background:rgba(8,23,38,.6);border:1px solid rgba(40,170,225,.12);border-radius:var(--r);padding:1.25rem 1.25rem .75rem}
+.presence-chart-title{font-size:.8rem;font-family:var(--mono);color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:1rem}
+.presence-chart-canvas-wrap{position:relative;width:100%;height:180px}
+#presenceChart{width:100%!important;height:180px!important}
+.presence-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.75rem}
+.presence-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--gray)}
+.presence-legend-line{width:18px;height:3px;border-radius:2px;flex-shrink:0}
+.result-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
+
+/* ── API status indicator (header right) ── */
+.api-status-indicator{display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border-radius:20px;border:1px solid rgba(40,170,225,.15);transition:all .2s;flex-shrink:0}
+.api-status-indicator:hover{border-color:rgba(40,170,225,.35);background:rgba(40,170,225,.07)}
+.api-status-dot{width:9px;height:9px;border-radius:50%;background:#888;transition:background .4s;flex-shrink:0}
+.api-status-dot.ok{background:var(--green);box-shadow:0 0 6px rgba(46,204,113,.7);animation:glow-dot 2s ease-in-out infinite}
+.api-status-dot.err{background:var(--red);box-shadow:0 0 6px rgba(255,71,87,.6)}
+.api-status-dot.checking{background:#f39c12;animation:blink 0.6s step-end infinite}
+.api-status-hint{font-family:var(--mono);font-size:10px;color:var(--gray);letter-spacing:1px}
+
+/* ── Analyse trigger bar ── */
+.analyse-trigger-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;background:rgba(40,170,225,.06);border:1px solid rgba(40,170,225,.2);border-radius:var(--r);margin-bottom:1.25rem}
+.analyse-trigger-left{font-size:.85rem;color:var(--gray);font-family:var(--mono);font-size:12px}
+
+/* ══ LIVE DETECTION PAGE ══ */
+
+/* Launch card */
+.live-launch-card{display:flex;align-items:center;gap:1.25rem;padding:1.5rem 1.75rem;background:rgba(13,45,66,.55);border:1px solid rgba(40,170,225,.12);border-radius:var(--r);flex-wrap:wrap}
+.live-launch-icon{font-size:2.5rem;flex-shrink:0}
+.live-launch-title{font-size:1rem;font-weight:600;margin-bottom:.25rem}
+.live-launch-sub{font-size:.8rem;color:var(--gray);font-family:var(--mono)}
+.live-launch-text{flex:1;min-width:140px}
+
+/* Init */
+.live-init-wrap{display:flex;flex-direction:column;align-items:center;padding:3.5rem 0;gap:1.5rem}
+
+/* Now bar */
+.live-now-bar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:.75rem 1.25rem;background:rgba(40,170,225,.06);border:1px solid rgba(40,170,225,.15);border-radius:var(--rs);margin-bottom:1.25rem;font-size:.8rem}
+.live-now-left{display:flex;align-items:center;gap:.5rem;font-family:var(--mono);color:var(--gray)}
+.live-now-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:blink 1s step-end infinite}
+.live-now-time{color:var(--blue);font-weight:600}
+.live-now-winner{font-size:1rem;font-weight:700;color:#fff;flex:1;text-align:center;letter-spacing:-.5px;transition:all .3s}
+.live-now-window{font-family:var(--mono);font-size:10px;color:var(--gray)}
+
+/* Live bars */
+.live-bars{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
+.live-bar-row{display:grid;grid-template-columns:170px 1fr 68px;align-items:center;gap:.9rem;padding:.9rem 1.25rem;background:rgba(13,45,66,.4);border-radius:var(--rs);border:1px solid rgba(40,170,225,.07);transition:border-color .25s,background .25s}
+.live-bar-row.live-win{background:rgba(40,170,225,.1);border-color:rgba(40,170,225,.32)}
+.live-bar-lbl{display:flex;align-items:center;gap:8px}
+.live-bar-emoji{font-size:1.3rem}
+.live-bar-name{font-weight:600;font-size:.9rem;display:block}
+.live-bar-code{font-family:var(--mono);font-size:9px;color:var(--gray);display:block}
+.live-bar-track{height:12px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden}
+.live-bar-fill{height:100%;border-radius:6px;transition:width .35s cubic-bezier(.4,0,.2,1);width:0%}
+.live-bar-pct{font-family:var(--mono);font-size:15px;font-weight:700;text-align:right;transition:color .25s;color:var(--blue)}
+
+/* Progress bar with window markers */
+.live-audio-section{margin-top:.5rem}
+.live-progress-wrap{position:relative;padding-bottom:1.4rem}
+.live-progress-track{height:6px;background:rgba(40,170,225,.1);border-radius:3px;position:relative;overflow:visible;margin-bottom:.3rem}
+.live-progress-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--blue),var(--accent));border-radius:3px;transition:width .1s linear;width:0%}
+.live-progress-cursor{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px rgba(40,170,225,.7);transition:left .1s linear;left:0%}
+.live-progress-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--gray)}
+.live-markers{position:absolute;top:0;left:0;right:0;height:6px;pointer-events:none}
+.live-marker{position:absolute;top:-3px;width:2px;height:12px;background:rgba(255,255,255,.2);border-radius:1px;transform:translateX(-50%)}
+.live-marker.live-marker-active{background:var(--blue);box-shadow:0 0 6px rgba(40,170,225,.5)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="tl-tooltip"></div>
+<header>
+  <div class="logo-wrap">
+    <a href="https://www.esiea.fr/ecole/campus-laval/" target="_blank" rel="noopener" class="logo-esiea">
+      <img src="./logo.png" alt="ESIEA" style="height:36px;width:auto;display:block;object-fit:contain;">
+    </a>
+    <div class="logo-divider"></div>
+    <div class="logo" onclick="navigate('accueil')">
+      <div><div class="logo-name">SoundID</div><div class="logo-sub">INF3043</div></div>
+    </div>
+  </div>
+  <nav>
+    <button onclick="navigate('accueil')"      data-page="accueil"      class="active">Accueil</button>
+    <button onclick="navigate('enregistreur')" data-page="enregistreur">Enregistreur <span class="nav-badge" id="badge-rec"></span></button>
+    <button onclick="navigate('live')"         data-page="live">Live Detection <span class="nav-badge" id="badge-live"></span> <span style="font-size:9px;opacity:.55;font-family:var(--mono);margin-left:2px">β</span></button>
+    <button onclick="navigate('analyse')"      data-page="analyse">Analyse <span class="nav-badge" id="badge-ana"></span></button>
+  </nav>
+  <div class="api-status-indicator" id="apiStatusIndicator" title="Statut API — cliquer pour tester" onclick="quickPing()">
+    <div class="api-status-dot" id="apiStatusDot"></div>
+    <span class="api-status-hint" id="apiStatusHint">API</span>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ══ ACCUEIL ══ -->
+<div class="page active" id="page-accueil">
+  <div class="hero-wrap">
+    <div class="hero-glow"></div>
+    <div class="wave-bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <h1 class="hero-title"><span class="thin">Reconnaître</span><br>les instruments<br><span class="blue">à l'oreille.</span></h1>
+    <p class="hero-desc">Déposez un fichier ou enregistrez depuis votre micro. Notre CNN identifie les instruments présents sur toute la durée du fichier.</p>
+    <div class="hero-tags">
+      <span class="tag">🎸 Guitare acoustique</span>
+      <span class="tag">🎹 Piano</span>
+      <span class="tag">🎻 Orgue</span>
+      <span class="tag">🎤 Voix humaine</span>
+    </div>
+    <button class="btn btn-blue" onclick="navigate('enregistreur')">Commencer →</button>
+    <div class="hero-status">
+      <div class="status-dot" id="heroStatusDot"></div>
+      <span id="heroStatusText">Aucun audio chargé</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ENREGISTREUR ══ -->
+<div class="page" id="page-enregistreur">
+  <div class="page-header">
+    <div class="page-label">/ 01 — input</div>
+    <h2 class="page-title">Chargez votre audio</h2>
+    <p class="page-sub">Importez un fichier ou enregistrez depuis le micro. Toutes les durées sont acceptées.</p>
+  </div>
+  <div class="rec-grid">
+    <div class="card">
+      <div class="card-title">📂 Importer un fichier</div>
+      <div class="card-sub">.wav · .mp3 · .ogg · .flac — durée libre</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept=".wav,.mp3,.ogg,.flac">
+        <div class="upload-icon">🎵</div>
+        <div class="upload-hint">Glisser / Déposer ou cliquer</div>
+        <div class="upload-fname" id="uploadName"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎙️ Enregistrer depuis le micro</div>
+      <div class="card-sub">Durée libre — cliquez pour démarrer puis arrêter.</div>
+      <button class="mic-btn" id="micBtn" onclick="toggleRec()">
+        <span>🎙️</span>
+        <span id="micLabel">Démarrer l'enregistrement</span>
+        <div class="rec-dot"></div>
+        <span class="rec-timer" id="recTimer">00:00</span>
+      </button>
+    </div>
+  </div>
+  <div class="review-panel" id="reviewPanel">
+    <div class="review-header">
+      <div>
+        <div class="review-title">🎧 Aperçu — <span id="reviewFilename">—</span></div>
+        <div class="review-meta" id="reviewMeta">—</div>
+      </div>
+      <div class="review-controls">
+        <button class="btn btn-ghost btn-sm" id="downloadBtn" onclick="downloadAudio()">⬇ Télécharger</button>
+        <button class="btn btn-danger btn-sm" onclick="clearAudio()">✕ Effacer</button>
+      </div>
+    </div>
+    <canvas class="waveform-canvas" id="waveCanvas"></canvas>
+    <div class="review-audio"><audio id="reviewAudio" controls></audio></div>
+  </div>
+  <div class="analyze-bar" id="analyzeBar" style="display:none">
+    <div class="analyze-bar-left">Prêt · <strong id="analyzeBarFile">—</strong></div>
+    <button class="btn btn-blue" onclick="startAnalysis()">Analyser →</button>
+  </div>
+</div>
+
+<!-- ══ ANALYSE ══ -->
+<div class="page" id="page-analyse">
+  <div class="page-header">
+    <div class="page-label">/ 02 — résultats</div>
+    <h2 class="page-title">Analyse CNN</h2>
+    <p class="page-sub">Le fichier est découpé en fenêtres de 3s. Le modèle est appelé une fois par fenêtre.</p>
+  </div>
+
+  <!-- API bar -->
+  <div class="api-bar">
+    <div class="api-dot" id="apiDot"></div>
+    <div class="api-label">API : <strong id="apiLabel">non vérifiée</strong></div>
+    <input class="api-url" id="apiUrl" type="text" value="http://localhost:5000">
+    <button class="btn btn-ghost btn-sm" onclick="pingApi()">Tester →</button>
+  </div>
+
+  <!-- Options -->
+  <div class="options-row">
+    <div class="model-select-wrap">
+      <span class="model-label">Modèle</span>
+      <select class="model-select" id="modelSelect">
+        <option value="best_model" selected>best_model</option>
+      </select>
+    </div>
+    <div class="switch-wrap" id="binarySwitch" onclick="toggleBinary()">
+      <div class="switch-track"><div class="switch-thumb"></div></div>
+      <span class="switch-label-text">Binaire</span>
+      <span class="switch-badge" id="binaryBadge">OFF</span>
+    </div>
+  </div>
+
+  <!-- Analyze trigger bar -->
+  <div class="analyse-trigger-bar" id="analyseTriggerBar" style="display:none">
+    <div class="analyse-trigger-left" id="analyseTriggerFile">— Aucun fichier chargé</div>
+    <button class="btn btn-blue" onclick="runAnalysis()">&#9654; Analyser</button>
+  </div>
+
+  <!-- States -->
+  <div class="no-audio-state" id="noAudioState">
+    <div class="no-audio-icon">🔇</div>
+    <div class="no-audio-text">Aucun audio chargé. Allez dans <strong>Enregistreur</strong>.</div>
+    <button class="btn btn-outline btn-sm" onclick="navigate('enregistreur')">Aller à l'enregistreur</button>
+  </div>
+
+  <div class="loading-state" id="loadingState">
+    <div class="rings"><span></span><span></span><span></span><div class="dot"></div></div>
+    <div class="loading-lbl" id="loadingLbl">Envoi du fichier à l'API...</div>
+    <div class="loading-sub" id="loadingSub">POST /predict · multipart/form-data</div>
+  </div>
+
+  <div class="error-state" id="errorState"><h4>⚠ Erreur API</h4><pre id="errorMsg"></pre></div>
+
+  <div class="result-state" id="resultState">
+    <!-- Meta pills -->
+    <div class="meta-row" id="metaRow"></div>
+
+    <!-- Summary bars -->
+    <div class="summary-title">Présence par instrument</div>
+    <div class="bars" id="barsContainer"></div>
+
+    <!-- Timeline toggle -->
+    <div class="timeline-toggle" id="timelineToggle" onclick="toggleTimeline()">
+      <span class="timeline-toggle-icon">📈</span>
+      <div>
+        <div class="timeline-toggle-label">Voir la timeline de présence</div>
+        <div class="timeline-toggle-sub" id="timelineToggleSub">—</div>
+      </div>
+      <span class="timeline-chevron">▼</span>
+    </div>
+
+    <!-- Timeline expandable -->
+    <div class="timeline-wrap" id="timelineWrap">
+      <div class="timeline-inner" id="timelineInner"></div>
+    </div>
+
+    <!-- Presence chart -->
+    <div class="presence-chart-wrap" id="presenceChartWrap" style="display:none">
+      <div class="presence-chart-title">Présence par instrument (% / fenêtre)</div>
+      <div class="presence-chart-canvas-wrap">
+        <canvas id="presenceChart"></canvas>
+      </div>
+      <div class="presence-legend" id="presenceLegend"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-outline btn-sm" onclick="navigate('enregistreur')">↩ Nouveau fichier</button>
+      <button class="btn btn-ghost btn-sm"   onclick="reanalyze()">↻ Relancer</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ LIVE DETECTION ══ -->
+<div class="page" id="page-live">
+  <div class="page-header">
+    <div class="page-label">/ 02 — live detection <span style="font-family:var(--mono);font-size:9px;color:rgba(40,170,225,.5);margin-left:4px">β</span></div>
+    <h2 class="page-title">Live Detection</h2>
+    <p class="page-sub">Configurez l'analyse, lancez — le modèle s'initialise puis joue l'audio avec les scores en direct.</p>
+  </div>
+
+  <!-- No audio state -->
+  <div class="no-audio-state" id="liveNoAudio">
+    <div class="no-audio-icon">🎙️</div>
+    <div class="no-audio-text">Aucun fichier chargé. Allez dans <strong>Enregistreur</strong> pour importer ou capturer un son.</div>
+    <button class="btn btn-outline btn-sm" onclick="navigate('enregistreur')">Aller à l'enregistreur</button>
+  </div>
+
+  <!-- Config + player — visible only when audio loaded -->
+  <div id="liveMain" style="display:none">
+
+    <!-- API bar (same as analyse) -->
+    <div class="api-bar">
+      <div class="api-dot" id="liveApiDot"></div>
+      <div class="api-label">API : <strong id="liveApiLabel">non vérifiée</strong></div>
+      <input class="api-url" id="liveApiUrl" type="text" value="http://localhost:5000">
+      <button class="btn btn-ghost btn-sm" onclick="pingLiveApi()">Tester →</button>
+    </div>
+
+    <!-- Options row -->
+    <div class="options-row" style="margin-bottom:1.5rem">
+      <div class="model-select-wrap">
+        <span class="model-label">Modèle</span>
+        <select class="model-select" id="liveModelSelect">
+          <option value="best_model" selected>best_model</option>
+        </select>
+      </div>
+      <div class="switch-wrap" id="liveBinarySwitch" onclick="toggleLiveBinary()">
+        <div class="switch-track"><div class="switch-thumb"></div></div>
+        <span class="switch-label-text">Binaire</span>
+        <span class="switch-badge" id="liveBinaryBadge">OFF</span>
+      </div>
+    </div>
+
+    <!-- Launch button — idle state -->
+    <div id="liveIdleState">
+      <div class="live-launch-card">
+        <div class="live-launch-icon">🎬</div>
+        <div class="live-launch-text">
+          <div class="live-launch-title">Prêt à lancer</div>
+          <div class="live-launch-sub" id="liveLaunchFile">—</div>
+        </div>
+        <button class="btn btn-blue" id="liveLaunchBtn" onclick="launchLive()">
+          ▶ Lancer la Live Detection
+        </button>
+      </div>
+    </div>
+
+    <!-- Init state -->
+    <div id="liveInitState" style="display:none">
+      <div class="live-init-wrap">
+        <div class="rings"><span></span><span></span><span></span><div class="dot"></div></div>
+        <div class="loading-lbl" id="liveInitLbl">Initialisation du modèle...</div>
+        <div class="loading-sub" id="liveInitSub">Chargement des poids · Découpage fenêtres 3s</div>
+      </div>
+    </div>
+
+    <!-- Player state — shown after init -->
+    <div id="livePlayerState" style="display:none">
+
+      <!-- Current window badge -->
+      <div class="live-now-bar">
+        <div class="live-now-left">
+          <span class="live-now-dot" id="liveNowDot"></span>
+          <span class="live-now-label">En cours</span>
+          <span class="live-now-time" id="liveNowTime">0.0s</span>
+        </div>
+        <div class="live-now-winner" id="liveNowWinner">—</div>
+        <div class="live-now-window">Fenêtre <span id="liveNowWin">—</span> / <span id="liveNowTotal">—</span></div>
+      </div>
+
+      <!-- Big animated bars -->
+      <div class="live-bars" id="liveBarsContainer"></div>
+
+      <!-- Audio player + progress -->
+      <div class="live-audio-section">
+        <audio id="liveAudioEl" controls style="width:100%;border-radius:8px;margin-bottom:.75rem;filter:none"></audio>
+        <div class="live-progress-wrap">
+          <div class="live-progress-track">
+            <div class="live-progress-fill" id="liveProgressFill"></div>
+            <div class="live-progress-cursor" id="liveProgressCursor"></div>
+          </div>
+          <div class="live-progress-labels">
+            <span>0s</span><span id="liveProgressDur">—</span>
+          </div>
+          <!-- Window markers -->
+          <div class="live-markers" id="liveMarkers"></div>
+        </div>
+      </div>
+
+      <!-- Reset button -->
+      <div style="margin-top:1.25rem">
+        <button class="btn btn-outline btn-sm" onclick="resetLive()">↩ Reconfigurer</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════════════════
+const INST_META = {
+  gac: { name:'Guitare acoustique', emoji:'🎸', color:'#28AAE1' },
+  org: { name:'Orgue',              emoji:'🎻', color:'#a78bfa' },
+  pia: { name:'Piano',              emoji:'🎹', color:'#34d399' },
+  voi: { name:'Voix humaine',       emoji:'🎤', color:'#fb923c' },
+};
+const INSTRUMENTS = ['gac','org','pia','voi'];
+
+const LOADING_STEPS = [
+  ['Envoi du fichier à l\'API...',   'POST /predict · multipart/form-data'],
+  ['Découpage en fenêtres 3s...',    'eval.py · slice_windows()'],
+  ['Inférence par fenêtre...',       'model(mel_spectrogram) × n_windows'],
+  ['Calcul des ratios de présence...','presence_count / n_windows'],
+  ['Construction de la timeline...',  'window_indices par instrument'],
+];
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const state = {
+  blob:null, filename:null, sourceType:null,
+  objectUrl:null, lastResult:null,
+  binaryMode:false, timelineOpen:false,
+};
+
+// ══════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════
+function navigate(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelector(`nav button[data-page="${id}"]`).classList.add('active');
+  document.getElementById('main').scrollTop = 0;
+  if(id==='enregistreur') refreshRecPage();
+  if(id==='analyse')      refreshAnalysePage();
+  if(id==='live')         refreshLivePage();
+  if(id==='accueil')      refreshHero();
+}
+
+// ══════════════════════════════════════════════════════
+//  WAV ENCODER (stdlib-compatible, PCM 16-bit)
+// ══════════════════════════════════════════════════════
+function encodeWAV(samples, sr) {
+  const buf    = new ArrayBuffer(44 + samples.length * 2);
+  const view   = new DataView(buf);
+  const write  = (o,s) => { for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+  const u32    = (o,v) => view.setUint32(o, v, true);
+  const u16    = (o,v) => view.setUint16(o, v, true);
+  write(0,'RIFF'); u32(4, 36 + samples.length*2); write(8,'WAVE');
+  write(12,'fmt '); u32(16,16); u16(20,1); u16(22,1);
+  u32(24,sr); u32(28,sr*2); u16(32,2); u16(34,16);
+  write(36,'data'); u32(40, samples.length*2);
+  let offset = 44;
+  for(let i=0;i<samples.length;i++){
+    const s = Math.max(-1,Math.min(1,samples[i]));
+    view.setInt16(offset, s<0 ? s*0x8000 : s*0x7FFF, true);
+    offset += 2;
+  }
+  return new Blob([buf], {type:'audio/wav'});
+}
+
+
+// ══════════════════════════════════════════════════════
+//  PRESENCE CHART
+// ══════════════════════════════════════════════════════
+let _presenceChart = null;
+
+function buildPresenceChart(data) {
+  const wrap = document.getElementById('presenceChartWrap');
+  const tl   = data.timeline;
+  if (!tl || tl.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  // X axis : midpoint of each window in seconds
+  const labels = tl.map(w => ((w.start_s + w.end_s) / 2).toFixed(1) + 's');
+
+  // One dataset per instrument
+  const datasets = INSTRUMENTS.map(key => {
+    const meta   = INST_META[key];
+    const values = tl.map(w => Math.round((w.scores[key] || 0) * 100));
+    return {
+      label:           meta.emoji + ' ' + key.toUpperCase(),
+      data:            values,
+      borderColor:     meta.color,
+      backgroundColor: meta.color + '22',
+      borderWidth:     2,
+      pointRadius:     4,
+      pointHoverRadius: 6,
+      pointBackgroundColor: meta.color,
+      stepped:         true,
+      fill:            false,
+    };
+  });
+
+  // Destroy previous chart if exists
+  if (_presenceChart) { _presenceChart.destroy(); _presenceChart = null; }
+
+  const ctx = document.getElementById('presenceChart').getContext('2d');
+  _presenceChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive:          true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(8,23,38,.97)',
+          borderColor:     'rgba(40,170,225,.35)',
+          borderWidth:     1,
+          titleColor:      '#6ba8c4',
+          bodyColor:       '#fff',
+          padding:         10,
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}  ${ctx.parsed.y}%`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid:  { color: 'rgba(40,170,225,.07)' },
+          ticks: { color: '#6ba8c4', font: { family: "'Space Mono', monospace", size: 10 } },
+        },
+        y: {
+          min: 0, max: 100,
+          grid:  { color: 'rgba(40,170,225,.07)' },
+          ticks: {
+            color: '#6ba8c4',
+            font:  { family: "'Space Mono', monospace", size: 10 },
+            callback: v => v + '%',
+            stepSize: 25,
+          },
+        },
+      },
+    },
+  });
+
+  // Legend
+  const leg = document.getElementById('presenceLegend');
+  leg.innerHTML = INSTRUMENTS.map(key => {
+    const m = INST_META[key];
+    return `<div class="presence-legend-item">
+      <div class="presence-legend-line" style="background:${m.color}"></div>
+      ${m.emoji} ${key.toUpperCase()} — ${m.name}
+    </div>`;
+  }).join('');
+}
+
+
+// ══════════════════════════════════════════════════════
+//  LIVE DETECTION
+// ══════════════════════════════════════════════════════
+const liveState = {
+  binaryMode: false,
+  data:       null,   // result from API
+  rafId:      null,   // requestAnimationFrame id
+};
+
+function refreshLivePage() {
+  const noAudio = document.getElementById('liveNoAudio');
+  const main    = document.getElementById('liveMain');
+  if (!state.blob) {
+    noAudio.style.display = 'flex';
+    main.style.display    = 'none';
+  } else {
+    noAudio.style.display = 'none';
+    main.style.display    = 'block';
+    document.getElementById('liveLaunchFile').textContent = state.filename || '—';
+    // Sync API url from analyse tab
+    const analyseUrl = document.getElementById('apiUrl')?.value;
+    if (analyseUrl) document.getElementById('liveApiUrl').value = analyseUrl;
+  }
+}
+
+async function pingLiveApi() {
+  const dot = document.getElementById('liveApiDot');
+  const lbl = document.getElementById('liveApiLabel');
+  dot.className = 'api-dot'; lbl.innerHTML = 'vérification...';
+  const base = document.getElementById('liveApiUrl').value.replace(/\/$/,'');
+  const ok   = await doPing(base);
+  if (ok) { dot.className='api-dot ok'; lbl.innerHTML='<strong>connectée ✓</strong>'; }
+  else    { dot.className='api-dot err'; lbl.innerHTML='<strong>inaccessible</strong>'; }
+  updateHeaderDot(ok);
+}
+
+function toggleLiveBinary() {
+  liveState.binaryMode = !liveState.binaryMode;
+  document.getElementById('liveBinarySwitch').classList.toggle('on', liveState.binaryMode);
+  document.getElementById('liveBinaryBadge').textContent = liveState.binaryMode ? 'ON' : 'OFF';
+}
+
+// ── LAUNCH ──────────────────────────────────────────────────────
+const LIVE_INIT_STEPS = [
+  ['Initialisation du modèle...', 'Chargement des poids · vérification architecture'],
+  ['Découpage en fenêtres...', 'Sliding window 3s · overlap 0%'],
+  ['Inférence par fenêtre...', 'CNN forward pass × n_windows'],
+  ['Préparation de la lecture...', 'Synchronisation audio ↔ scores'],
+];
+
+async function launchLive() {
+  if (!state.blob) return;
+
+  // Switch to init UI
+  document.getElementById('liveIdleState').style.display   = 'none';
+  document.getElementById('liveInitState').style.display   = 'flex';
+  document.getElementById('livePlayerState').style.display = 'none';
+
+  // Animate init steps while API runs
+  let step = 0;
+  const iv = setInterval(() => {
+    if (step < LIVE_INIT_STEPS.length) {
+      document.getElementById('liveInitLbl').textContent = LIVE_INIT_STEPS[step][0];
+      document.getElementById('liveInitSub').textContent = LIVE_INIT_STEPS[step][1];
+      step++;
+    }
+  }, 800);
+
+  try {
+    const modelName = document.getElementById('liveModelSelect').value;
+    const binaryStr = liveState.binaryMode ? 'true' : 'false';
+    const form      = new FormData();
+    form.append('audio',       state.blob, state.filename);
+    form.append('model',       modelName);
+    form.append('binary_mode', binaryStr);
+
+    const base = document.getElementById('liveApiUrl').value.replace(/\/$/,'');
+    const res  = await fetch(base + '/predict', { method:'POST', body:form });
+    clearInterval(iv);
+
+    if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + await res.text());
+
+    liveState.data = await res.json();
+    document.getElementById('liveInitState').style.display = 'none';
+    buildLivePlayer(liveState.data);
+
+  } catch(err) {
+    clearInterval(iv);
+    document.getElementById('liveInitState').style.display = 'none';
+    document.getElementById('liveIdleState').style.display = 'block';
+    alert('Erreur API : ' + err.message);
+  }
+}
+
+// ── BUILD PLAYER ─────────────────────────────────────────────────
+function buildLivePlayer(data) {
+  const tl = data.timeline || [];
+  if (!tl.length) return;
+
+  // Setup audio
+  const audio = document.getElementById('liveAudioEl');
+  audio.src = state.objectUrl;
+
+  // Total / windows
+  document.getElementById('liveNowTotal').textContent   = tl.length;
+  document.getElementById('liveProgressDur').textContent = data.duration_s.toFixed(1) + 's';
+
+  // Build bars
+  const barsEl = document.getElementById('liveBarsContainer');
+  barsEl.innerHTML = '';
+  INSTRUMENTS.forEach(key => {
+    const m  = INST_META[key];
+    const el = document.createElement('div');
+    el.className = 'live-bar-row';
+    el.id        = 'lbar-' + key;
+    el.innerHTML = `
+      <div class="live-bar-lbl">
+        <span class="live-bar-emoji">${m.emoji}</span>
+        <div><span class="live-bar-name">${m.name}</span><span class="live-bar-code">${key.toUpperCase()}</span></div>
+      </div>
+      <div class="live-bar-track">
+        <div class="live-bar-fill" id="lfill-${key}" style="background:${m.color}"></div>
+      </div>
+      <div class="live-bar-pct" id="lpct-${key}">0%</div>`;
+    barsEl.appendChild(el);
+  });
+
+  // Build timeline markers
+  const markersEl = document.getElementById('liveMarkers');
+  markersEl.innerHTML = '';
+  tl.forEach((w, i) => {
+    const mk = document.createElement('div');
+    mk.className = 'live-marker';
+    mk.id = 'lmk-' + i;
+    mk.style.left = ((w.start_s / data.duration_s) * 100) + '%';
+    markersEl.appendChild(mk);
+  });
+
+  document.getElementById('livePlayerState').style.display = 'block';
+
+  // Start sync loop
+  if (liveState.rafId) cancelAnimationFrame(liveState.rafId);
+  syncLoop(audio, data);
+
+  // Also sync on seek
+  audio.addEventListener('seeked', () => syncTick(audio, data));
+}
+
+// ── SYNC LOOP ─────────────────────────────────────────────────────
+function syncLoop(audio, data) {
+  syncTick(audio, data);
+  liveState.rafId = requestAnimationFrame(() => syncLoop(audio, data));
+}
+
+function syncTick(audio, data) {
+  const t  = audio.currentTime;
+  const tl = data.timeline;
+  const dur = data.duration_s;
+
+  // Progress bar
+  const pct = dur > 0 ? Math.min(100, (t / dur) * 100) : 0;
+  document.getElementById('liveProgressFill').style.width  = pct + '%';
+  document.getElementById('liveProgressCursor').style.left = pct + '%';
+  document.getElementById('liveNowTime').textContent        = t.toFixed(1) + 's';
+
+  // Find current window
+  let curWin = tl[0];
+  let curIdx = 0;
+  for (let i = 0; i < tl.length; i++) {
+    if (t >= tl[i].start_s) { curWin = tl[i]; curIdx = i; }
+    else break;
+  }
+
+  document.getElementById('liveNowWin').textContent = curIdx + 1;
+
+  // Update markers
+  tl.forEach((w, i) => {
+    const mk = document.getElementById('lmk-' + i);
+    if (mk) mk.classList.toggle('live-marker-active', i === curIdx);
+  });
+
+  // Update bars
+  const scores = curWin.scores || {};
+  const winner = curWin.winner;
+  const winMeta = INST_META[winner] || {};
+
+  document.getElementById('liveNowWinner').textContent = (winMeta.emoji || '') + ' ' + (winMeta.name || winner);
+
+  INSTRUMENTS.forEach(key => {
+    const score  = scores[key] || 0;
+    const pctVal = Math.round(score * 100);
+    const isWin  = key === winner;
+
+    const fillEl = document.getElementById('lfill-' + key);
+    const pctEl  = document.getElementById('lpct-'  + key);
+    const rowEl  = document.getElementById('lbar-'  + key);
+
+    if (fillEl) fillEl.style.width = pctVal + '%';
+    if (pctEl)  { pctEl.textContent = pctVal + '%'; pctEl.style.color = isWin ? 'var(--accent)' : 'var(--blue)'; }
+    if (rowEl)  rowEl.classList.toggle('live-win', isWin);
+  });
+}
+
+function resetLive() {
+  if (liveState.rafId) { cancelAnimationFrame(liveState.rafId); liveState.rafId = null; }
+  const audio = document.getElementById('liveAudioEl');
+  audio.pause(); audio.src = '';
+  liveState.data = null;
+  document.getElementById('livePlayerState').style.display = 'none';
+  document.getElementById('liveIdleState').style.display   = 'block';
+}
+
+refreshHero();
+
+// ══════════════════════════════════════════════════════
+//  AUDIO STATE
+// ══════════════════════════════════════════════════════
+function setAudio(blob, filename, sourceType) {
+  if(state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+  Object.assign(state,{blob,filename,sourceType,objectUrl:URL.createObjectURL(blob),lastResult:null});
+  updateBadges(); refreshHero();
+}
+function clearAudio() {
+  if(state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+  Object.assign(state,{blob:null,filename:null,sourceType:null,objectUrl:null,lastResult:null});
+  updateBadges(); refreshRecPage(); refreshHero();
+}
+function updateBadges() {
+  document.getElementById('badge-rec').classList.toggle('show', !!state.blob);
+  document.getElementById('badge-ana').classList.toggle('show', !!state.lastResult);
+  document.getElementById('badge-live').classList.toggle('show', !!state.blob);
+}
+
+// ══════════════════════════════════════════════════════
+//  BINARY SWITCH
+// ══════════════════════════════════════════════════════
+function toggleBinary() {
+  state.binaryMode = !state.binaryMode;
+  document.getElementById('binarySwitch').classList.toggle('on',state.binaryMode);
+  document.getElementById('binaryBadge').textContent = state.binaryMode ? 'ON' : 'OFF';
+}
+
+// ══════════════════════════════════════════════════════
+//  HERO
+// ══════════════════════════════════════════════════════
+function refreshHero() {
+  const dot=document.getElementById('heroStatusDot'), txt=document.getElementById('heroStatusText');
+  if(state.blob){dot.className='status-dot loaded';txt.textContent=`Audio chargé — ${state.filename}`;}
+  else{dot.className='status-dot';txt.textContent='Aucun audio chargé';}
+}
+
+// ══════════════════════════════════════════════════════
+//  ENREGISTREUR
+// ══════════════════════════════════════════════════════
+function refreshRecPage() {
+  const panel=document.getElementById('reviewPanel'), bar=document.getElementById('analyzeBar');
+  if(state.blob){
+    panel.classList.add('show');
+    document.getElementById('reviewFilename').textContent = state.filename;
+    document.getElementById('reviewAudio').src = state.objectUrl;
+    document.getElementById('reviewMeta').textContent =
+      `${state.sourceType==='mic'?'🎙️ Micro':'📂 Fichier'} · ${(state.blob.size/1024).toFixed(1)} KB`;
+    document.getElementById('downloadBtn').style.display = state.sourceType==='mic'?'inline-flex':'none';
+    drawWaveform(state.blob);
+    bar.style.display='flex';
+    document.getElementById('analyzeBarFile').textContent=state.filename;
+  } else {
+    panel.classList.remove('show'); bar.style.display='none';
+    document.getElementById('uploadName').textContent='';
+  }
+}
+
+async function drawWaveform(blob) {
+  const canvas=document.getElementById('waveCanvas'), ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||600, H=56;
+  canvas.width=W*devicePixelRatio; canvas.height=H*devicePixelRatio;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  try{
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
+    const dec=await ac.decodeAudioData(await blob.arrayBuffer());
+    const data=dec.getChannelData(0), step=Math.floor(data.length/W), mid=H/2;
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<W;i++){
+      let max=0;
+      for(let j=0;j<step;j++){const v=Math.abs(data[i*step+j]||0);if(v>max)max=v;}
+      ctx.fillStyle=`rgba(40,170,225,${0.4+max*0.6})`;
+      ctx.fillRect(i,mid-Math.max(2,max*mid*1.6),1,Math.max(2,max*mid*1.6)*2);
+    }
+    await ac.close();
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════
+//  UPLOAD & MIC
+// ══════════════════════════════════════════════════════
+const uploadZone=document.getElementById('uploadZone'), fileInput=document.getElementById('fileInput');
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('over');});
+uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('over'));
+uploadZone.addEventListener('drop',e=>{e.preventDefault();uploadZone.classList.remove('over');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+fileInput.addEventListener('change',()=>{if(fileInput.files[0])handleFile(fileInput.files[0]);});
+function handleFile(f){document.getElementById('uploadName').textContent=f.name;setAudio(f,f.name,'file');refreshRecPage();}
+
+let mediaRecorder=null,recChunks=[],recInterval=null,recSecs=0;
+async function toggleRec(){
+  const btn=document.getElementById('micBtn');
+  if(!mediaRecorder||mediaRecorder.state==='inactive'){
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      mediaRecorder=new MediaRecorder(stream); recChunks=[];
+      mediaRecorder.ondataavailable=e=>recChunks.push(e.data);
+      mediaRecorder.onstop=async()=>{
+        // Le navigateur enregistre en webm/opus — on ré-encode en WAV 16kHz mono
+        // via AudioContext pour que eval.py (stdlib wave) puisse le décoder
+        const rawBlob = new Blob(recChunks, {type: mediaRecorder.mimeType});
+        const arrayBuf = await rawBlob.arrayBuffer();
+        const ac = new (window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
+        const decoded = await ac.decodeAudioData(arrayBuf);
+        await ac.close();
+
+        // Render offline à 16kHz mono
+        const offline = new OfflineAudioContext(1, decoded.length * 16000 / decoded.sampleRate, 16000);
+        const src = offline.createBufferSource();
+        src.buffer = decoded;
+        src.connect(offline.destination);
+        src.start();
+        const rendered = await offline.startRendering();
+
+        // Encode en WAV PCM 16-bit
+        const wavBlob = encodeWAV(rendered.getChannelData(0), 16000);
+        const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+        setAudio(wavBlob, `enregistrement_${ts}.wav`, 'mic');
+        refreshRecPage();
+      };
+      mediaRecorder.start(); btn.classList.add('rec');
+      document.getElementById('micLabel').textContent="Arrêter l'enregistrement";
+      recSecs=0;
+      recInterval=setInterval(()=>{recSecs++;
+        document.getElementById('recTimer').textContent=
+          String(Math.floor(recSecs/60)).padStart(2,'0')+':'+String(recSecs%60).padStart(2,'0');
+      },1000);
+    }catch{alert('Microphone inaccessible — vérifiez les permissions.');}
+  }else{
+    mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+    clearInterval(recInterval); btn.classList.remove('rec');
+    document.getElementById('micLabel').textContent="Démarrer l'enregistrement";
+  }
+}
+function downloadAudio(){if(!state.blob)return;const a=document.createElement('a');a.href=state.objectUrl;a.download=state.filename;a.click();}
+
+// ══════════════════════════════════════════════════════
+//  ANALYSE
+// ══════════════════════════════════════════════════════
+// Shared ping logic — updates both header dot and analyse-page dot
+async function doPing(baseUrl) {
+  try {
+    const r = await fetch(baseUrl + '/health', {signal: AbortSignal.timeout(3000)});
+    return r.ok;
+  } catch { return false; }
+}
+
+// Full ping — updates analyse page api-bar
+async function pingApi(){
+  const dot=document.getElementById('apiDot'), lbl=document.getElementById('apiLabel');
+  dot.className='api-dot'; lbl.innerHTML='vérification...';
+  const base=document.getElementById('apiUrl').value.replace(/\/$/,'');
+  const ok = await doPing(base);
+  if(ok){ dot.className='api-dot ok'; lbl.innerHTML='<strong>connectée ✓</strong>'; }
+  else  { dot.className='api-dot err'; lbl.innerHTML='<strong>inaccessible</strong>'; }
+  updateHeaderDot(ok);
+}
+
+// Quick ping — header dot only, silent
+async function quickPing(){
+  const hdot = document.getElementById('apiStatusDot');
+  const hint = document.getElementById('apiStatusHint');
+  hdot.className = 'api-status-dot checking'; hint.textContent='...';
+  const base = (document.getElementById('apiUrl')?.value || 'http://localhost:5000').replace(/\/$/,'');
+  const ok = await doPing(base);
+  updateHeaderDot(ok);
+}
+
+function updateHeaderDot(ok){
+  const hdot = document.getElementById('apiStatusDot');
+  const hint = document.getElementById('apiStatusHint');
+  if(ok){ hdot.className='api-status-dot ok'; hint.textContent='ON'; }
+  else  { hdot.className='api-status-dot err'; hint.textContent='OFF'; }
+}
+
+function refreshAnalysePage(){
+  document.getElementById('loadingState').classList.remove('show');
+  document.getElementById('errorState').classList.remove('show');
+  document.getElementById('resultState').classList.remove('show');
+  // Trigger bar
+  const bar = document.getElementById('analyseTriggerBar');
+  const fileLbl = document.getElementById('analyseTriggerFile');
+  if(state.blob){
+    bar.style.display = 'flex';
+    fileLbl.textContent = state.filename;
+    document.getElementById('noAudioState').style.display='none';
+    if(state.lastResult) renderResult(state.lastResult);
+  } else {
+    bar.style.display = 'none';
+    document.getElementById('noAudioState').style.display='flex';
+  }
+}
+
+async function startAnalysis(){if(!state.blob)return;navigate('analyse');await runAnalysis();}
+async function reanalyze(){document.getElementById('resultState').classList.remove('show');await runAnalysis();}
+
+async function runAnalysis(){
+  document.getElementById('noAudioState').style.display='none';
+  document.getElementById('errorState').classList.remove('show');
+  document.getElementById('resultState').classList.remove('show');
+  document.getElementById('loadingState').classList.add('show');
+  state.timelineOpen=false;
+
+  let step=0;
+  const iv=setInterval(()=>{
+    if(step<LOADING_STEPS.length){
+      document.getElementById('loadingLbl').textContent=LOADING_STEPS[step][0];
+      document.getElementById('loadingSub').textContent=LOADING_STEPS[step][1];
+      step++;
+    }
+  },700);
+
+  try{
+    // ── PAGE → API ─────────────────────────────────────────────────
+    // POST multipart/form-data
+    //   "audio"       : Blob
+    //   "model"       : string (best_model)
+    //   "binary_mode" : "true" | "false"
+    // ──────────────────────────────────────────────────────────────
+    const form=new FormData();
+    form.append('audio', state.blob, state.filename);
+    form.append('model', document.getElementById('modelSelect').value);
+    form.append('binary_mode', state.binaryMode?'true':'false');
+
+    const base=document.getElementById('apiUrl').value.replace(/\/$/,'');
+    const res=await fetch(base+'/predict',{method:'POST',body:form});
+    clearInterval(iv);
+    if(!res.ok) throw new Error(`HTTP ${res.status} — ${await res.text()}`);
+
+    // ── API → PAGE ─────────────────────────────────────────────────
+    // JSON : { model_name, binary_mode, duration_s, n_windows, window_s,
+    //          summary: { gac/org/pia/voi: { presence_ratio, presence_count,
+    //                      dominant, window_indices } },
+    //          timeline: [ { window_index, start_s, end_s, winner, scores } ],
+    //          processed_in_ms }
+    // ──────────────────────────────────────────────────────────────
+    const data=await res.json();
+    state.lastResult=data; updateBadges();
+    document.getElementById('loadingState').classList.remove('show');
+    renderResult(data);
+
+  }catch(err){
+    clearInterval(iv);
+    document.getElementById('loadingState').classList.remove('show');
+    document.getElementById('errorState').classList.add('show');
+    document.getElementById('errorMsg').textContent=
+      err.message+'\n\nVérifiez que l\'API est lancée :\n  uvicorn api:app --reload --port 5000';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER RESULT
+// ══════════════════════════════════════════════════════
+function renderResult(data){
+  // ── Meta pills ─────────────────────────────────────
+  const row=document.getElementById('metaRow'); row.innerHTML='';
+  const add=(k,v)=>row.innerHTML+=`<span class="meta-pill">${k} : <strong>${v}</strong></span>`;
+  add('Durée', data.duration_s.toFixed(1)+'s');
+  add('Fenêtres', data.n_windows);
+  add('Modèle', data.model_name);
+  add('Binaire', data.binary_mode?'OUI':'NON');
+  add('Temps', data.processed_in_ms+'ms');
+
+  // ── Bars ───────────────────────────────────────────
+  const cont=document.getElementById('barsContainer'); cont.innerHTML='';
+  const sorted=[...INSTRUMENTS].sort((a,b)=>data.summary[b].presence_ratio-data.summary[a].presence_ratio);
+  sorted.forEach(key=>{
+    const s=data.summary[key], m=INST_META[key];
+    const pct=Math.round(s.presence_ratio*100);
+    const el=document.createElement('div');
+    el.className='bar-row'+(s.dominant?' dominant':'');
+    el.innerHTML=`
+      <div class="bar-lbl">
+        <div class="bar-color-dot" style="background:${m.color}"></div>
+        <span class="bar-emoji">${m.emoji}</span>
+        <div>
+          <span class="bar-name">${m.name}</span>
+          <span class="bar-detail">${s.presence_count} / ${data.n_windows} fenêtres</span>
+        </div>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" data-p="${pct}" style="width:0;background:${m.color};opacity:.85"></div>
+      </div>
+      <div class="bar-pct" style="color:${m.color}">${pct}%</div>`;
+    cont.appendChild(el);
+  });
+  setTimeout(()=>document.querySelectorAll('.bar-fill').forEach(b=>b.style.width=b.dataset.p+'%'),80);
+
+  // ── Timeline toggle label ──────────────────────────
+  document.getElementById('timelineToggleSub').textContent=
+    `${data.n_windows} fenêtres × ${data.window_s}s — cliquer pour afficher`;
+
+  // ── Build timeline DOM (hidden) ────────────────────
+  buildTimeline(data);
+  buildPresenceChart(data);
+
+  // Fermer la timeline si elle était ouverte
+  const wrap=document.getElementById('timelineWrap');
+  const tog =document.getElementById('timelineToggle');
+  wrap.classList.remove('open'); tog.classList.remove('open');
+
+  document.getElementById('resultState').classList.add('show');
+}
+
+// ══════════════════════════════════════════════════════
+//  TIMELINE
+// ══════════════════════════════════════════════════════
+function toggleTimeline(){
+  state.timelineOpen=!state.timelineOpen;
+  document.getElementById('timelineWrap').classList.toggle('open',state.timelineOpen);
+  document.getElementById('timelineToggle').classList.toggle('open',state.timelineOpen);
+}
+
+// ══════════════════════════════════════════════════════
+//  TIMELINE SEGMENT TOOLTIP — bulle fixe suivant la souris
+// ══════════════════════════════════════════════════════
+const _tt = document.getElementById('tl-tooltip');
+
+function showSegTooltip(e) {
+  const seg    = e.currentTarget;
+  const start  = seg.dataset.winStart;
+  const end    = seg.dataset.winEnd;
+  const scores = JSON.parse(seg.dataset.scores);
+
+  const top3 = Object.entries(scores)
+    .map(([k,v]) => ({key:k, score:parseFloat(v), meta:INST_META[k]}))
+    .sort((a,b) => b.score - a.score)
+    .slice(0,3);
+  const maxScore = top3[0].score || 1;
+
+  const rows = top3.map((item, i) => {
+    const pct  = Math.round(item.score * 100);
+    const barW = Math.round((item.score / maxScore) * 100);
+    const cls  = i === 0 ? 'tl-tt-winner' : '';
+    return `<div class="tl-tt-row ${cls}">
+      <div class="tl-tt-label">${item.meta.emoji} ${item.key.toUpperCase()}</div>
+      <div class="tl-tt-bar-wrap"><div class="tl-tt-bar" style="width:${barW}%;background:${item.meta.color}"></div></div>
+      <div class="tl-tt-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  _tt.innerHTML = `<div class="tl-tt-time">⏱ ${start}s — ${end}s</div>${rows}`;
+  _tt.classList.add('show');
+  positionTooltip(e);
+}
+
+function moveSegTooltip(e)  { positionTooltip(e); }
+function hideSegTooltip()   { _tt.classList.remove('show'); }
+
+function positionTooltip(e) {
+  const tw = _tt.offsetWidth, th = _tt.offsetHeight;
+  let x = e.clientX - tw / 2;
+  let y = e.clientY - th - 18;
+  x = Math.max(8, Math.min(x, window.innerWidth  - tw - 8));
+  y = Math.max(8, Math.min(y, window.innerHeight - th - 8));
+  _tt.style.left = x + 'px';
+  _tt.style.top  = y + 'px';
+}
+
+function buildTimeline(data){
+  const inner=document.getElementById('timelineInner');
+  inner.innerHTML='';
+  const dur=data.duration_s, tl=data.timeline, n=data.n_windows;
+  if(!tl||n===0){inner.innerHTML='<div style="color:var(--gray);font-size:.85rem">Aucune fenêtre.</div>';return;}
+
+  // Legend
+  const legend=document.createElement('div'); legend.className='tl-legend';
+  INSTRUMENTS.forEach(k=>{
+    const m=INST_META[k];
+    legend.innerHTML+=`<div class="tl-legend-item"><div class="tl-legend-dot" style="background:${m.color}"></div>${m.emoji} ${m.name}</div>`;
+  });
+  inner.appendChild(legend);
+
+  // Track rows — une par instrument
+  const tracks=document.createElement('div'); tracks.className='tl-tracks';
+
+  INSTRUMENTS.forEach(key=>{
+    const m=INST_META[key], s=data.summary[key];
+    const row=document.createElement('div'); row.className='tl-row';
+
+    // Label
+    const lbl=document.createElement('div'); lbl.className='tl-row-label';
+    lbl.innerHTML=`<div class="dot" style="background:${m.color}"></div>${m.emoji} ${key.toUpperCase()}`;
+    row.appendChild(lbl);
+
+    // Track
+    const track=document.createElement('div'); track.className='tl-track';
+
+    // Un segment par fenêtre où cet instrument est winner
+    s.window_indices.forEach(wi=>{
+      const win=tl[wi];
+      if(!win)return;
+      const leftPct =(win.start_s/dur)*100;
+      const widthPct=((win.end_s-win.start_s)/dur)*100;
+      const score   =win.scores[key];
+      const opacity =data.binary_mode ? 1 : 0.4+score*0.6;
+
+      const seg=document.createElement('div');
+      seg.className='tl-seg';
+      seg.style.cssText=`left:${leftPct}%;width:${widthPct}%;background:${m.color};opacity:${opacity}`;
+      // Store window data on the segment for tooltip
+      seg.dataset.winStart = win.start_s.toFixed(1);
+      seg.dataset.winEnd   = win.end_s.toFixed(1);
+      seg.dataset.scores   = JSON.stringify(win.scores);
+
+      seg.addEventListener('mouseenter', showSegTooltip);
+      seg.addEventListener('mousemove',  moveSegTooltip);
+      seg.addEventListener('mouseleave', hideSegTooltip);
+      track.appendChild(seg);
+    });
+
+    row.appendChild(track);
+    tracks.appendChild(row);
+  });
+
+  inner.appendChild(tracks);
+
+  // Time axis
+  const axisWrap=document.createElement('div'); axisWrap.className='tl-axis';
+  const axis=document.createElement('div'); axis.className='tl-axis-inner';
+
+  const tickCount=Math.min(10, Math.ceil(dur/5)+1);
+  const tickStep =dur/(tickCount-1||1);
+  for(let i=0;i<tickCount;i++){
+    const t=Math.round(i*tickStep);
+    const tick=document.createElement('div');
+    tick.className='tl-tick';
+    tick.style.left=((t/dur)*100)+'%';
+    tick.textContent=t+'s';
+    axis.appendChild(tick);
+  }
+  axisWrap.appendChild(axis);
+  inner.appendChild(axisWrap);
+}
+
+refreshHero();
+</script>
+</body>
+</html>
