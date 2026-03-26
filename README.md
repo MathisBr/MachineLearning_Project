@@ -24,11 +24,13 @@ Organisation des donnees:
 Execution (exemple):
 1. Installer les dependances:
    pip install -r requirements.txt
-2. Lancer la pipeline complete:
+2. Lancer la page web en une commande (ouvre le navigateur automatiquement):
+   py launch_web.py
+3. Lancer la pipeline complete:
    py Code/main.py
-3. Variante evaluation seule:
+4. Variante evaluation seule:
    py Code/main.py --eval-only
-4. Variante web API:
+5. Variante web API (manuel):
    cd Web
    uvicorn api:app --reload --port 5000
 
