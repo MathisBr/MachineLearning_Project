@@ -265,19 +265,6 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
 .presence-legend-line{width:18px;height:3px;border-radius:2px;flex-shrink:0}
 .result-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
 
-/* ══ RESSOURCES ══ */
-.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem}
-.res-card{background:rgba(13,45,66,.5);border:1px solid rgba(40,170,225,.1);border-radius:var(--r);padding:1.4rem;display:flex;flex-direction:column;gap:.6rem;transition:all .3s;text-decoration:none;color:inherit}
-.res-card:hover{border-color:rgba(40,170,225,.32);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.3)}
-.res-top{display:flex;align-items:center;justify-content:space-between}
-.res-icon{font-size:1.8rem}
-.res-badge{font-family:var(--mono);font-size:9px;padding:2px 9px;border-radius:20px;border:1px solid rgba(40,170,225,.3);color:var(--blue);letter-spacing:1px}
-.res-card h4{font-size:.95rem;font-weight:600}
-.res-card p{font-size:.82rem;color:var(--gray);line-height:1.6;flex:1}
-.res-dl{font-size:.8rem;color:var(--blue);font-weight:600;margin-top:.25rem}
-.note{margin-top:2rem;padding:1.25rem 1.5rem;background:rgba(40,170,225,.05);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;font-size:.83rem;color:var(--gray);line-height:1.7}
-.note strong{color:var(--blue)}
-
 /* ── API status indicator (header right) ── */
 .api-status-indicator{display:flex;align-items:center;gap:6px;cursor:pointer;padding:5px 10px;border-radius:20px;border:1px solid rgba(40,170,225,.15);transition:all .2s;flex-shrink:0}
 .api-status-indicator:hover{border-color:rgba(40,170,225,.35);background:rgba(40,170,225,.07)}
@@ -354,7 +341,6 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
     <button onclick="navigate('enregistreur')" data-page="enregistreur">Enregistreur <span class="nav-badge" id="badge-rec"></span></button>
     <button onclick="navigate('live')"         data-page="live">Live Detection <span class="nav-badge" id="badge-live"></span> <span style="font-size:9px;opacity:.55;font-family:var(--mono);margin-left:2px">β</span></button>
     <button onclick="navigate('analyse')"      data-page="analyse">Analyse <span class="nav-badge" id="badge-ana"></span></button>
-    <button onclick="navigate('ressources')"   data-page="ressources">Ressources</button>
   </nav>
   <div class="api-status-indicator" id="apiStatusIndicator" title="Statut API — cliquer pour tester" onclick="quickPing()">
     <div class="api-status-dot" id="apiStatusDot"></div>
@@ -633,65 +619,6 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
   </div>
 </div>
 
-
-<!-- ══ RESSOURCES ══ -->
-<div class="page" id="page-ressources">
-  <div class="page-header">
-    <div class="page-label">/ 03 — téléchargements</div>
-    <h2 class="page-title">Ressources</h2>
-    <p class="page-sub">Fichiers nécessaires pour reproduire, entraîner ou étendre ce projet.</p>
-  </div>
-  <div class="res-grid">
-    <a href="./eval.py" download class="res-card">
-      <div class="res-top"><div class="res-icon">🧠</div><span class="res-badge">.PY</span></div>
-      <h4>eval.py — Inférence</h4>
-      <p>Découpe l'audio en fenêtres 3s, appelle le CNN une fois par fenêtre, calcule les ratios de présence et la timeline.</p>
-      <div class="res-dl">↓ eval.py</div>
-    </a>
-    <a href="./api.py" download class="res-card">
-      <div class="res-top"><div class="res-icon">⚡</div><span class="res-badge">.PY</span></div>
-      <h4>api.py — Relay FastAPI</h4>
-      <p>Reçoit le POST, appelle eval.py en subprocess, renvoie le JSON à la page.</p>
-      <div class="res-dl">↓ api.py</div>
-    </a>
-    <a href="./train.py" download class="res-card">
-      <div class="res-top"><div class="res-icon">🏋️</div><span class="res-badge">.PY</span></div>
-      <h4>Script d'entraînement</h4>
-      <p>Log-Mel, SpecAugment, CNN, boucle train/val, early stopping, génère les .pth dans ../Models/.</p>
-      <div class="res-dl">↓ train.py</div>
-    </a>
-    <a href="./evaluate_irmas.py" download class="res-card">
-      <div class="res-top"><div class="res-icon">📊</div><span class="res-badge">.PY</span></div>
-      <h4>Évaluation IRMAS</h4>
-      <p>Métrique officielle 0/1 sur le test set IRMAS. Utilise eval.py en interne.</p>
-      <div class="res-dl">↓ evaluate_irmas.py</div>
-    </a>
-    <a href="https://www.upf.edu/web/mtg/irmas" target="_blank" class="res-card">
-      <div class="res-top"><div class="res-icon">🎼</div><span class="res-badge">DATASET</span></div>
-      <h4>IRMAS Dataset</h4>
-      <p>11 instruments · 6705 clips train 3s · 2874 fichiers test de longueur variable.</p>
-      <div class="res-dl">↗ upf.edu/mtg</div>
-    </a>
-    <a href="https://github.com/qiuqiangkong/audioset_tagging_cnn" target="_blank" class="res-card">
-      <div class="res-top"><div class="res-icon">🔬</div><span class="res-badge">GITHUB</span></div>
-      <h4>PANNs — CNN pré-entraîné</h4>
-      <p>CNN14 AudioSet. Fine-tune pour IRMAS = +15% accuracy estimée.</p>
-      <div class="res-dl">↗ github.com/qiuqiangkong</div>
-    </a>
-  </div>
-  <div class="note">
-    <div style="margin-bottom:.75rem"><strong>Note sur l'utilisation de l'IA générative</strong></div>
-    Ce projet a utilisé <strong>Claude (Anthropic)</strong> de façon intensive mais encadrée tout au long du développement.<br><br>
-    L'approche a été <strong>très guidée</strong> : chaque choix technique — architecture CNN, stratégie de fenêtrage, split anti-leakage, structure du contrat API, choix de FastAPI — a fait l'objet d'échanges et de validation avant implémentation. Claude a servi de sparring partner pour challenger les décisions, notamment sur les pièges du dataset IRMAS (data leakage inter-clips, domain shift train/test) et sur les stratégies d'agrégation des fenêtres.<br><br>
-    En revanche, la <strong>rédaction du code</strong> de <code>esiea_instrument_detector.html</code> et de <code>api.py</code> a été entièrement produite par l'IA à partir des spécifications fournies, sans copier-coller de sources extérieures.<br><br>
-    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem">
-      <a href="https://www.upf.edu/web/mtg/irmas" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;border:1px solid rgba(40,170,225,.3);color:var(--blue);font-family:var(--mono);font-size:10px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(40,170,225,.1)'" onmouseout="this.style.background='transparent'">🎼 IRMAS Dataset</a>
-      <a href="./api.py" download style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;border:1px solid rgba(40,170,225,.3);color:var(--blue);font-family:var(--mono);font-size:10px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(40,170,225,.1)'" onmouseout="this.style.background='transparent'">⚡ Dossier API</a>
-      <a href="./train.py" download style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;border:1px solid rgba(40,170,225,.3);color:var(--blue);font-family:var(--mono);font-size:10px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(40,170,225,.1)'" onmouseout="this.style.background='transparent'">🏋️ Dossier Training</a>
-      <a href="https://claude.ai" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;border:1px solid rgba(40,170,225,.3);color:var(--blue);font-family:var(--mono);font-size:10px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(40,170,225,.1)'" onmouseout="this.style.background='transparent'">🤖 Claude — Anthropic</a>
-    </div>
-  </div>
-</div>
 
 </main>
 
