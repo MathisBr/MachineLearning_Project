@@ -46,16 +46,19 @@ def health():
 @app.post("/predict")
 async def predict(
     audio:       UploadFile = File(...),
-    model:       str        = Form("LilDrill"),
+    model:       str        = Form("best_model"),
     binary_mode: str        = Form("false"),
 ):
     # ── Lire les bytes audio depuis le POST ────────────────────────────────
     raw = await audio.read()
 
+    model_name = "best_model"
+
     log("POST /predict", {
         "filename":     audio.filename,
         "size_bytes":   len(raw),
-        "model":        model,
+        "model":        model_name,
+        "model_input":  model,
         "binary_mode":  binary_mode,
         "content_type": audio.content_type,
     })
@@ -66,7 +69,7 @@ async def predict(
     # stdout    : JSON résultat
     cmd = [
         sys.executable, str(EVAL_SCRIPT),
-        model,
+        model_name,
         binary_mode,
     ]
 

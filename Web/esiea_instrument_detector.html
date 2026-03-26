@@ -455,10 +455,7 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
     <div class="model-select-wrap">
       <span class="model-label">Modèle</span>
       <select class="model-select" id="modelSelect">
-        <option value="LilDrill">LilDrill</option>
-        <option value="Brrrevet">Brrrevet</option>
-        <option value="Silver">Silver</option>
-        <option value="MonkI">MonkI</option>
+        <option value="best_model" selected>best_model</option>
       </select>
     </div>
     <div class="switch-wrap" id="binarySwitch" onclick="toggleBinary()">
@@ -561,10 +558,7 @@ main::-webkit-scrollbar-thumb{background:rgba(40,170,225,.25);border-radius:3px}
       <div class="model-select-wrap">
         <span class="model-label">Modèle</span>
         <select class="model-select" id="liveModelSelect">
-          <option value="LilDrill">LilDrill</option>
-          <option value="Brrrevet">Brrrevet</option>
-          <option value="Silver">Silver</option>
-          <option value="MonkI">MonkI</option>
+          <option value="best_model" selected>best_model</option>
         </select>
       </div>
       <div class="switch-wrap" id="liveBinarySwitch" onclick="toggleLiveBinary()">
@@ -1285,7 +1279,7 @@ async function runAnalysis(){
     // ── PAGE → API ─────────────────────────────────────────────────
     // POST multipart/form-data
     //   "audio"       : Blob
-    //   "model"       : string (LilDrill | Brrrevet | Silver | MonkI)
+    //   "model"       : string (best_model)
     //   "binary_mode" : "true" | "false"
     // ──────────────────────────────────────────────────────────────
     const form=new FormData();

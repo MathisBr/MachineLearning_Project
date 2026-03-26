@@ -16,7 +16,7 @@ SoundID est une application web fullstack composée de trois éléments indépen
 |---------|------|
 | `esiea_instrument_detector.html` | Interface SPA — zéro dépendance, s'ouvre directement dans le navigateur |
 | `api.py` | Relay FastAPI — reçoit le POST, appelle `eval.py`, renvoie le JSON |
-| `eval.py` | Inférence pure — charge le `.pth`, découpe l'audio, vote, sort le résultat |
+| `eval.py` | Inférence pure — charge `best_model.pt`, découpe l'audio, vote, sort le résultat |
 
 ```
 Navigateur  ──POST /predict──▶  api.py  ──subprocess──▶  eval.py
@@ -44,13 +44,10 @@ pip install -r requirements.txt
 uvicorn api:app --reload --port 5000
 ```
 
-Placer les poids entraînés dans :
+Placer le poids entraîné dans :
 ```
 ../Models/
-    LilDrill.pth
-    Brrrevet.pth
-    Silver.pth
-    MonkI.pth
+  best_model.pt
 ```
 
 Ouvrir `esiea_instrument_detector.html` dans le navigateur, onglet **Analyse** → renseigner `http://localhost:5000` → **Tester →**.
@@ -78,7 +75,7 @@ Point d'entrée principal. Accepte un fichier audio et des paramètres d'infére
 | Champ | Type | Valeurs acceptées | Défaut |
 |-------|------|-------------------|--------|
 | `audio` | File | `.wav` `.mp3` `.ogg` `.flac` | — |
-| `model` | string | `LilDrill` `Brrrevet` `Silver` `MonkI` | `LilDrill` |
+| `model` | string | `best_model` | `best_model` |
 | `binary_mode` | string | `"true"` `"false"` | `"false"` |
 
 **Réponse** — `application/json`
@@ -105,7 +102,7 @@ Point d'entrée principal. Accepte un fichier audio et des paramètres d'infére
 
 **Pipeline interne de `eval.py`**
 
-1. Chargement du `.pth` depuis `../Models/<model_name>.pth`
+1. Chargement du checkpoint depuis `../Models/best_model.pt`
 2. Resample → 16 kHz mono
 3. Découpage en fenêtres de **3 secondes** (overlap 50%) — padding silence si trop court
 4. Pour chaque fenêtre : Log-Mel Spectrogram → normalisation → CNN → logits

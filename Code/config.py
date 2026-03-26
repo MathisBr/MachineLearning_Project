@@ -23,7 +23,7 @@ TRAIN_DIRS = {
 
 TEST_DIR = DATA_DIR / "Test"
 CACHE_DIR = PROJECT_ROOT / "cache"
-MODEL_DIR = PROJECT_ROOT / "models"
+MODEL_DIR = PROJECT_ROOT / "Models"
 
 # ─── Classes ────────────────────────────────────────────────────────────────
 CLASSES = ["gac", "org", "pia", "voi"]

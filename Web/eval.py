@@ -75,7 +75,8 @@ WINDOW_S    = 3.0       # durée d'une fenêtre = durée train
 # Si tu veux du 50% overlap, change STEP_S = 1.5
 
 STEP_S      = 3.0
-MODELS_DIR  = Path(__file__).parent / ".." / "Models"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+MODELS_DIR  = PROJECT_ROOT / "Models"
 
 # ══════════════════════════════════════════════════════════════════════════
 #  ARCHITECTURE — doit correspondre à ton train.py
@@ -85,7 +86,10 @@ class ConvBlock(nn.Module):
     def __init__(self, in_ch: int, out_ch: int):
         super().__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(in_ch, out_ch, kernel_size=3, padding=1, bias=False),
+            nn.Conv2d(in_ch, out_ch, kernel_size=3, padding=1),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_ch, out_ch, kernel_size=3, padding=1),
             nn.BatchNorm2d(out_ch),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),
@@ -98,30 +102,34 @@ class ConvBlock(nn.Module):
 class InstrumentCNN(nn.Module):
     def __init__(self, n_classes: int = 4):
         super().__init__()
-        # Ancienne architecture stable
-        self.conv_layers = nn.Sequential(
+        self.features = nn.Sequential(
             ConvBlock(1, 32),
             ConvBlock(32, 64),
             ConvBlock(64, 128),
+            ConvBlock(128, 256),
         )
-        self.pool = nn.AdaptiveAvgPool2d((4, 4))
+        self.adaptive_pool = nn.AdaptiveAvgPool2d((4, 4))
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Dropout(0.3),
-            nn.Linear(128 * 4 * 4, 256),
+            nn.Dropout(0.5),
+            nn.Linear(256 * 4 * 4, 512),
             nn.ReLU(inplace=True),
             nn.Dropout(0.3),
-            nn.Linear(256, n_classes),
+            nn.Linear(512, n_classes),
         )
     
     def forward(self, x):
-        return self.classifier(self.pool(self.conv_layers(x)))
+        x = self.features(x)
+        x = self.adaptive_pool(x)
+        return self.classifier(x)
 
 # ══════════════════════════════════════════════════════════════════════════
 #  HELPERS
 # ══════════════════════════════════════════════════════════════════════════
 
 def load_model(name: str) -> InstrumentCNN:
+    # Le front/API est verrouille sur best_model; on force ce checkpoint ici aussi.
+    name = "best_model"
     # Supporte .pth et .pt
     path = None
     for ext in (".pth", ".pt"):
@@ -131,9 +139,12 @@ def load_model(name: str) -> InstrumentCNN:
             break
     if path is None:
         raise FileNotFoundError(f"Modele introuvable : {MODELS_DIR / name}(.pth|.pt)")
+
     model = InstrumentCNN(n_classes=len(INSTRUMENTS))
-    state = torch.load(path, map_location="cpu", weights_only=True)
-    model.load_state_dict(state)
+    checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+    # Accepte soit un state_dict brut, soit un checkpoint complet de train.py.
+    state_dict = checkpoint.get("model_state_dict", checkpoint) if isinstance(checkpoint, dict) else checkpoint
+    model.load_state_dict(state_dict)
     model.eval()
     return model
 
