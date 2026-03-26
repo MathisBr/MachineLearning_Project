@@ -171,6 +171,13 @@ def standard_collate_fn(batch):
     return specs_tensor, labels_tensor
 
 
+def test_collate_fn(batch):
+    """Collate function pour le test qui préserve les annotations multi-label."""
+    specs, annotations, filenames = zip(*batch)
+    specs_tensor = torch.stack(specs)
+    return specs_tensor, list(annotations), list(filenames)
+
+
 # ─── Fonctions de création des DataLoaders ─────────────────────────────────
 
 def get_train_val_datasets():
@@ -266,6 +273,7 @@ def get_test_loader():
         batch_size=1,
         shuffle=False,
         num_workers=0,  # Pas de multiprocessing pour le test
+        collate_fn=test_collate_fn,
     )
 
     return test_loader

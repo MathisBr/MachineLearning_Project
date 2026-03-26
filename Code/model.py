@@ -5,7 +5,6 @@ Architecture VGG-inspired avec améliorations modernes :
   - 4 blocs Conv2d doublés + BatchNorm + ReLU + MaxPool
   - AdaptiveAvgPool2d(4,4) pour gérer les longueurs variables
   - Dropout stratifié dans le classifieur
-  - ~1.5M paramètres
 """
 
 import torch

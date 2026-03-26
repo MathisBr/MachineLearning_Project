@@ -2,9 +2,8 @@
 config.py — Hyperparamètres centralisés pour le pipeline IRMAS.
 
 Détection automatique du device :
-  1. CUDA (NVIDIA RTX)
-  2. DirectML (AMD 7900 XT sur Windows)
-  3. CPU (fallback)
+    1. CUDA (NVIDIA RTX)
+    2. CPU (fallback)
 """
 
 import os
@@ -42,13 +41,13 @@ F_MAX = 8000
 
 # ─── Training ──────────────────────────────────────────────────────────────
 BATCH_SIZE = 32
-NUM_EPOCHS = 100
+NUM_EPOCHS = 50
 LEARNING_RATE = 3e-4
 WEIGHT_DECAY = 1e-4
 VAL_SPLIT = 0.15          # 15% pour la validation
 EARLY_STOP_PATIENCE = 15
 LABEL_SMOOTHING = 0.1
-NUM_WORKERS = min(4, os.cpu_count() or 1)
+NUM_WORKERS = 0
 
 # ─── Augmentation ──────────────────────────────────────────────────────────
 FREQ_MASK_PARAM = 20      # SpecAugment : masquage fréquentiel
@@ -61,20 +60,11 @@ COSINE_T_MULT = 2         # Multiplicateur de période
 
 # ─── Device ────────────────────────────────────────────────────────────────
 def get_device():
-    """Détecte le meilleur device disponible : CUDA → DirectML → CPU."""
+    """Détecte le meilleur device disponible : CUDA → CPU."""
     if torch.cuda.is_available():
         device = torch.device("cuda")
         print(f"[Device] CUDA détecté : {torch.cuda.get_device_name(0)}")
         return device
-
-    # Essayer DirectML (AMD / Intel GPU sur Windows)
-    try:
-        import torch_directml
-        device = torch_directml.device()
-        print(f"[Device] DirectML détecté (AMD/Intel GPU)")
-        return device
-    except ImportError:
-        pass
 
     print("[Device] CPU uniquement")
     return torch.device("cpu")
