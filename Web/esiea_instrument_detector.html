@@ -1165,6 +1165,26 @@ function updateHeaderDot(ok){
   else  { hdot.className='api-status-dot err'; hint.textContent='OFF'; }
 }
 
+function initApiFromQueryParams(){
+  const params = new URLSearchParams(window.location.search);
+  const api = params.get('api');
+  const autoping = params.get('autoping');
+
+  if (api) {
+    const apiUrl = document.getElementById('apiUrl');
+    const liveApiUrl = document.getElementById('liveApiUrl');
+    if (apiUrl) apiUrl.value = api;
+    if (liveApiUrl) liveApiUrl.value = api;
+  }
+
+  if (autoping === '1' || autoping === 'true') {
+    setTimeout(() => {
+      pingApi();
+      pingLiveApi();
+    }, 150);
+  }
+}
+
 function refreshAnalysePage(){
   document.getElementById('loadingState').classList.remove('show');
   document.getElementById('errorState').classList.remove('show');
@@ -1425,6 +1445,7 @@ function buildTimeline(data){
   inner.appendChild(axisWrap);
 }
 
+initApiFromQueryParams();
 refreshHero();
 </script>
 </body>

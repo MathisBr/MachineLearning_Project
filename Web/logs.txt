@@ -1,0 +1,146 @@
+
+════════════════════════════════════════════════════════════
+[2026-03-26 20:16:05.752] POST /predict
+────────────────────────────────────────────────────────────
+{
+  "filename": "00 - gold fronts-8.wav",
+  "size_bytes": 3528044,
+  "model": "best_model",
+  "model_input": "best_model",
+  "binary_mode": "false",
+  "content_type": "audio/wav"
+}
+
+════════════════════════════════════════════════════════════
+[2026-03-26 20:16:10.102] OK — réponse envoyée
+────────────────────────────────────────────────────────────
+{
+  "model_name": "best_model",
+  "binary_mode": false,
+  "duration_s": 20.0,
+  "n_windows": 7,
+  "window_s": 3.0,
+  "summary": {
+    "gac": {
+      "presence_ratio": 0.0,
+      "presence_count": 0,
+      "dominant": false,
+      "window_indices": []
+    },
+    "org": {
+      "presence_ratio": 0.5714,
+      "presence_count": 4,
+      "dominant": true,
+      "window_indices": [
+        0,
+        2,
+        3,
+        4
+      ]
+    },
+    "pia": {
+      "presence_ratio": 0.1429,
+      "presence_count": 1,
+      "dominant": false,
+      "window_indices": [
+        6
+      ]
+    },
+    "voi": {
+      "presence_ratio": 0.2857,
+      "presence_count": 2,
+      "dominant": false,
+      "window_indices": [
+        1,
+        5
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "window_index": 0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "winner": "org",
+      "scores": {
+        "gac": 0.2343,
+        "org": 0.8488,
+        "pia": 0.4366,
+        "voi": 0.8175
+      }
+    },
+    {
+      "window_index": 1,
+      "start_s": 3.0,
+      "end_s": 6.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.33,
+        "org": 0.6202,
+        "pia": 0.5419,
+        "voi": 0.8763
+      }
+    },
+    {
+      "window_index": 2,
+      "start_s": 6.0,
+      "end_s": 9.0,
+      "winner": "org",
+      "scores": {
+        "gac": 0.2823,
+        "org": 0.734,
+        "pia": 0.5671,
+        "voi": 0.7029
+      }
+    },
+    {
+      "window_index": 3,
+      "start_s": 9.0,
+      "end_s": 12.0,
+      "winner": "org",
+      "scores": {
+        "gac": 0.3152,
+        "org": 0.9061,
+        "pia": 0.3979,
+        "voi": 0.6885
+      }
+    },
+    {
+      "window_index": 4,
+      "start_s": 12.0,
+      "end_s": 15.0,
+      "winner": "org",
+      "scores": {
+        "gac": 0.3415,
+        "org": 0.9492,
+        "pia": 0.3672,
+        "voi": 0.4178
+      }
+    },
+    {
+      "window_index": 5,
+      "start_s": 15.0,
+      "end_s": 18.0,
+      "winner": "voi",
+      "scores": {
+        "gac": 0.2904,
+        "org": 0.6286,
+        "pia": 0.517,
+        "voi": 0.9536
+      }
+    },
+    {
+      "window_index": 6,
+      "start_s": 18.0,
+      "end_s": 20.0,
+      "winner": "pia",
+      "scores": {
+        "gac": 0.222,
+        "org": 0.3512,
+        "pia": 0.8575,
+        "voi": 0.518
+      }
+    }
+  ],
+  "processed_in_ms": 269.4
+}

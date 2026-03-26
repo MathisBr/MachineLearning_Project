@@ -32,6 +32,33 @@ Navigateur  ◀───────JSON────────api.py  ◀─�
 
 ## Setup
 
+### Lancement rapide (recommande)
+
+Depuis la racine du projet :
+
+```bash
+python launch_web.py
+```
+
+Ce script :
+- lance l'API FastAPI sur `http://127.0.0.1:5000`
+- attend que `GET /health` reponde
+- ouvre automatiquement la page web dans le navigateur
+
+Options utiles :
+
+```bash
+python launch_web.py --port 5050
+python launch_web.py --no-browser
+python launch_web.py --no-install
+```
+
+Arret : `Ctrl+C`
+
+---
+
+### Lancement manuel
+
 ```bash
 # 1 — Environnement virtuel
 python -m venv .venv
