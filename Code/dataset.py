@@ -91,7 +91,6 @@ class IRMASTestDataset(Dataset):
         pt_path = self.files[idx]
         spec = torch.load(pt_path, weights_only=True)
 
-        # Charger les annotations depuis le .txt correspondant
         txt_path = self.test_dir / (pt_path.stem + ".txt")
         annotations = self._load_annotations(txt_path)
 
@@ -139,7 +138,7 @@ def mixup_collate_fn(batch, alpha=config.MIXUP_ALPHA):
 
     if alpha > 0:
         lam = np.random.beta(alpha, alpha)
-        lam = max(lam, 1 - lam)  # Assurer que lam >= 0.5
+        lam = max(lam, 1 - lam)  # lam >= 0.5 pour éviter un mélange trop déséquilibré
 
         batch_size = specs_tensor.size(0)
         index = torch.randperm(batch_size)

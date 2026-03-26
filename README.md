@@ -30,9 +30,6 @@ Execution (exemple):
    py Code/main.py
 4. Variante evaluation seule:
    py Code/main.py --eval-only
-5. Variante web API (manuel):
-   cd Web
-   uvicorn api:app --reload --port 5000
 
 3) Utilisation de l'IA generative
 - Utilisee: Oui

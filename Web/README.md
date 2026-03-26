@@ -149,13 +149,3 @@ Point d'entrée principal. Accepte un fichier audio et des paramètres d'infére
 | `504` | `eval.py` a dépassé le timeout de 60s |
 
 ---
-
-## Utilisation de l'IA générative
-
-Ce projet a utilisé **Claude (Anthropic)** tout au long du développement.
-
-L'approche a été **très guidée** : chaque choix technique (architecture CNN, stratégie de fenêtrage, split anti-leakage, choix de FastAPI, structure du contrat API) a fait l'objet d'échanges et de validation avant implémentation. Claude a servi de sparring partner pour challenger les décisions — notamment sur les pièges du dataset IRMAS (data leakage inter-clips, domain shift train/test) et sur les stratégies d'agrégation.
-
-En revanche, la **rédaction du code** de `esiea_instrument_detector.html` et de `api.py` / `eval.py` a été entièrement produite par l'IA à partir des spécifications fournies, sans copier-coller de sources extérieures.
-
-> Sections concernées : `esiea_instrument_detector.html` (intégralité), `api.py` (intégralité), `eval.py` (intégralité), `README.md` (intégralité).
