@@ -14,13 +14,11 @@ import torchaudio
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from sklearn.model_selection import train_test_split
-from pathlib import Path
 
 import config
 
 
-# ─── Augmentation SpecAugment ──────────────────────────────────────────────
-
+# Augmentation SpecAugment
 class SpecAugment:
     """Applique FrequencyMasking + TimeMasking sur un spectrogramme."""
 
@@ -35,8 +33,7 @@ class SpecAugment:
         return spec
 
 
-# ─── Train/Val Dataset ─────────────────────────────────────────────────────
-
+# Train/Val Dataset
 class IRMASTrainDataset(Dataset):
     """
     Dataset pour l'entraînement/validation.
@@ -46,7 +43,7 @@ class IRMASTrainDataset(Dataset):
     def __init__(self, file_paths, labels, augment=False):
         """
         Args:
-            file_paths: liste de chemins vers les fichiers .pt
+            file_paths: liste de chemins vers les fichiers .pt / .pth
             labels: liste des indices de classe correspondants
             augment: si True, applique SpecAugment
         """
@@ -68,8 +65,7 @@ class IRMASTrainDataset(Dataset):
         return spec, label
 
 
-# ─── Test Dataset ──────────────────────────────────────────────────────────
-
+# Test Dataset
 class IRMASTestDataset(Dataset):
     """
     Dataset pour le test.
@@ -81,7 +77,7 @@ class IRMASTestDataset(Dataset):
         self.cache_dir = config.CACHE_DIR / "test"
         self.test_dir = config.TEST_DIR
 
-        # Lister les fichiers de test (un .pt = un .wav)
+        # Lister les fichiers de test (un .pt / un .pth = un .wav)
         self.files = sorted(self.cache_dir.glob("*.pt"))
 
     def __len__(self):
@@ -115,8 +111,7 @@ class IRMASTestDataset(Dataset):
         return annotations
 
 
-# ─── Collate function avec Mixup ──────────────────────────────────────────
-
+# Collate function avec Mixup
 def mixup_collate_fn(batch, alpha=config.MIXUP_ALPHA):
     """
     Collate function avec Mixup pour le training.
@@ -177,8 +172,7 @@ def test_collate_fn(batch):
     return specs_tensor, list(annotations), list(filenames)
 
 
-# ─── Fonctions de création des DataLoaders ─────────────────────────────────
-
+# Fonctions de création des DataLoaders
 def get_train_val_datasets():
     """
     Crée les datasets train et validation à partir du cache.

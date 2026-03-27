@@ -45,7 +45,7 @@ def main():
     config.print_config()
 
     if args.eval_only:
-        # ─── Évaluation seule ──────────────────────────────────────────
+        # Évaluation seule
         print("\n" + "=" * 60)
         print("  MODE : Évaluation uniquement")
         print("=" * 60)
@@ -59,7 +59,7 @@ def main():
         results = evaluate_from_checkpoint(best_model_path)
         return results
 
-    # ─── étape 1 : Preprocessing ──────────────────────────────────────
+    # Etape 1 - Preprocessing
     if not args.skip_preprocess:
         print("\n" + "=" * 60)
         print("  ÉTAPE 1/3 : Preprocessing")
@@ -72,13 +72,13 @@ def main():
             print("[Erreur] Dossier cache non trouvé. Relancez sans --skip-preprocess.")
             sys.exit(1)
 
-    # ─── étape 2 : Training ──────────────────────────────────────────
+    # Etape 2 - Training
     print("\n" + "=" * 60)
     print("  ÉTAPE 2/3 : Entraînement")
     print("=" * 60)
     model = train_model()
 
-    # ─── étape 3 : Evaluation ────────────────────────────────────────
+    # Etape 3 - Evaluation
     print("\n" + "=" * 60)
     print("  ÉTAPE 3/3 : Évaluation")
     print("=" * 60)

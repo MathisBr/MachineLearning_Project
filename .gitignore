@@ -8,10 +8,6 @@ Dataset_npy/
 *.json
 *.zip
 
-Models/
-*.pt
-*.pth
-
 # Python
 __pycache__/
 *.py[cod]

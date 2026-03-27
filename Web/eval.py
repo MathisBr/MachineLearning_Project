@@ -50,7 +50,6 @@ Notes :
 """
 
 import io
-import subprocess
 import json
 import sys
 import time
@@ -157,7 +156,6 @@ def load_audio_from_stdin() -> torch.Tensor:
     Retourne waveform float32 (1, N) resampleé à SAMPLE_RATE.
     """
     import wave
-    import struct
     import numpy as np
 
     raw = sys.stdin.buffer.read()
@@ -318,7 +316,7 @@ def run_inference(
 
 def main():
     if len(sys.argv) != 3:
-        _die(f"Usage: eval.py <model_name> <binary_mode>  (audio via stdin)")
+        _die("Usage: eval.py <model_name> <binary_mode>  (audio via stdin)")
 
     model_name   = sys.argv[1]
     binary_mode  = sys.argv[2].lower() == "true"

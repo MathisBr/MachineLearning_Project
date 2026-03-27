@@ -8,8 +8,6 @@ pénaliser la vitesse d'entraînement. Utilise soundfile + torchaudio transforms
 import torch
 import torchaudio
 import soundfile as sf
-import numpy as np
-from pathlib import Path
 from tqdm import tqdm
 
 import config

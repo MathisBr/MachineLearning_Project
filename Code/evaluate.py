@@ -12,7 +12,6 @@ Fournit aussi :
 """
 
 import torch
-import torch.nn as nn
 from torch.amp import autocast
 from collections import defaultdict
 from tqdm import tqdm
@@ -105,7 +104,7 @@ def evaluate_model(model, test_loader=None, verbose=True):
             print(f"  {cls:<10} {recall:.4f}       {correct}/{total}")
 
         # Distribution des prédictions
-        print(f"\n  Distribution des prédictions :")
+        print("\n  Distribution des prédictions :")
         for cls in config.CLASSES:
             count = predictions_dist.get(cls, 0)
             pct = 100.0 * count / total_files if total_files > 0 else 0.0
